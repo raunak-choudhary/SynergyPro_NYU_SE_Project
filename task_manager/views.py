@@ -3,17 +3,24 @@ from .models import Task
 from .forms import TaskForm
 
 # Create your views here.
-# create task
-def create_task(request):
+# Calendar view
+def task_calendar(request):
+    tasks = Task.objects.all()
+    return render(request, 'task_manager/calendar.html', {'tasks': tasks})
+
+# View to create a task
+def create_task(request, date):
     if request.method == "POST":
         form = TaskForm(request.POST)
         if form.is_valid():
-            form.save()
-            return redirect('/tasks')
+            task = form.save(commit=False)
+            task.due_date = date  # Set the selected date
+            task.save()
+            return redirect('task_list')
     else:
         form = TaskForm()
 
-    return render(request, 'task_manager/create_task.html', {'form': form})
+    return render(request, "task_manager/create_task.html", {'form': form, 'date': date})
 
 # view all tasks
 def task_list(request):
