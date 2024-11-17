@@ -1,0 +1,482 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SynergyPro</title>
+    <link rel="icon" href="{% static 'images/logo_title.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Section -->
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="{% static 'images/logo.png' %}" alt="SynergyPro Logo">
+                <a href="#" class="logo-link">SynergyPro</a>
+            </div>
+            <ul>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#about">About</a></li>
+                <li><a href="#contact">Contact Us</a></li>
+                <li><a href="#" id="loginBtn">Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <!-- Hero Section -->
+        <section id="hero">
+            <h1 data-aos="fade-up">Welcome to SynergyPro</h1>
+            <p data-aos="fade-up">Empowering productivity for students, professionals, and teams.</p>
+            <button onclick="scrollToFeatures()" data-aos="fade-up" data-aos-delay="400">Discover More</button>
+            <div class="hero-image" data-aos="zoom-in" data-aos-delay="600"></div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features">
+            <h2 data-aos="fade-up">Unique Features</h2>
+            <div class="feature-grid">
+                <div class="feature-card" data-aos="flip-left">
+                    <i class="fas fa-tasks"></i>
+                    <h3>Smart Task Management</h3>
+                    <p>AI-powered task prioritization and scheduling.</p>
+                </div>
+                <div class="feature-card" data-aos="flip-left" data-aos-delay="200">
+                    <i class="fas fa-users"></i>
+                    <h3>Real-Time Collaboration</h3>
+                    <p>Built-in chat and file sharing for seamless teamwork.</p>
+                </div>
+                <div class="feature-card" data-aos="flip-left" data-aos-delay="400">
+                    <i class="fas fa-chart-line"></i>
+                    <h3>Progress Tracking</h3>
+                    <p>Visual charts and analytics to monitor your productivity.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- About & Team Section -->
+        <section id="about">
+            <h2 class="section-title" data-aos="fade-up">About SynergyPro</h2>
+            <p data-aos="fade-up">
+                SynergyPro is a cutting-edge task management solution designed to revolutionize 
+                productivity for students, professionals, and teams. Our AI-powered platform offers 
+                smart scheduling, real-time collaboration, and insightful progress tracking to help 
+                you achieve your goals efficiently.
+            </p>
+            
+            <h2 class="section-title" data-aos="fade-up">Meet Our Team</h2>
+            <div class="team-container">
+                <!-- First Row - 3 Cards -->
+                <div class="team-row-top">
+                    <div class="team-member" data-aos="fade-up">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <img src="{% static 'images/team/raunak.png' %}" alt="Raunak" class="team-img">
+                                <h4 class="mt-3 fw-bold">Raunak Choudhary</h4>
+                                <p class="text-muted fst-italic">rc5553@nyu.edu</p>
+                                <div class="social-links">
+                                    <a href="https://linkedin.com/in/raunak-choudhary" target="_blank" aria-label="LinkedIn">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="https://github.com/raunak-choudhary" target="_blank" aria-label="GitHub">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="team-member" data-aos="fade-up" data-aos-delay="100">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <img src="{% static 'images/team/tejaswini.jpeg' %}" alt="Tejaswini" class="team-img" style="object-position: 10% 10%;">
+                                <h4 class="mt-3 fw-bold">Tejaswini Srivastava</h4>
+                                <p class="text-muted fst-italic">tps7866@nyu.edu</p>
+                                <div class="social-links">
+                                    <a href="https://www.linkedin.com/in/tejaswini-pradip-srivastava/" target="_blank" aria-label="LinkedIn">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="https://github.com/Tj-Github30" target="_blank" aria-label="GitHub">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="team-member" data-aos="fade-up" data-aos-delay="200">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <img src="{% static 'images/team/yoga.jpeg' %}" alt="Yogarajalaxmi" class="team-img" style="object-position: 20% 20%;">
+                                <h4 class="mt-3 fw-bold">Yogarajalaxmi S</h4>
+                                <p class="text-muted fst-italic">ys6678@nyu.edu</p>
+                                <div class="social-links">
+                                    <a href="https://www.linkedin.com/in/yoga-sathyanarayanan/" target="_blank" aria-label="LinkedIn">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="https://github.com/yogarajalakshmi-s" target="_blank" aria-label="GitHub">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Second Row - 2 Cards (Centered) -->
+                <div class="team-row-bottom">
+                    <div class="team-member" data-aos="fade-up" data-aos-delay="300">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <img src="{% static 'images/team/zikang.jpeg' %}" alt="Zikang" class="team-img">
+                                <h4 class="mt-3 fw-bold">Zikang Zhang</h4>
+                                <p class="text-muted fst-italic">zz10463@nyu.edu</p>
+                                <div class="social-links">
+                                    <a href="LinkedIn: https://www.linkedin.com/in/%E5%AD%90%E5%BA%B7-%E5%BC%A0-355926338/" target="_blank" aria-label="LinkedIn">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="https://github.com/Kang346" target="_blank" aria-label="GitHub">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="team-member" data-aos="fade-up" data-aos-delay="400">
+                        <div class="card">
+                            <div class="card-body text-center">
+                                <img src="{% static 'images/team/shubhan.png' %}" alt="Shubhan" class="team-img">
+                                <h4 class="mt-3 fw-bold">Shubhan Kadam</h4>
+                                <p class="text-muted fst-italic">sk12159@nyu.edu</p>
+                                <div class="social-links">
+                                    <a href="https://www.linkedin.com/in/shubhankadam" target="_blank" aria-label="LinkedIn">
+                                        <i class="fab fa-linkedin"></i>
+                                    </a>
+                                    <a href="https://github.com/shubhvn-dev" target="_blank" aria-label="GitHub">
+                                        <i class="fab fa-github"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact">
+            <h2 class="section-title" data-aos="fade-up">Contact Us</h2>
+            <form id="contactForm" data-aos="fade-up" data-aos-delay="200">
+                <div class="form-group">
+                    <input type="text" placeholder="Subject" required>
+                </div>
+                <div class="form-group message-group">
+                    <textarea placeholder="Message" required class="contact-textarea"></textarea>
+                </div>
+                <div class="form-button-container">
+                    <button type="submit">Send</button>
+                </div>
+            </form>
+        </section>
+    </main>
+
+    <!-- Login/Signup Modal -->
+    <div id="authModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <div class="auth-tabs">
+                <button class="tab-btn active" data-tab="loginForm">Login</button>
+                <button class="tab-btn" data-tab="signupForm">Sign Up</button>
+            </div>
+            
+            <!-- Login Form -->
+            <div id="loginForm" class="auth-form active">
+                <form>
+                    <div class="form-group">
+                        <label for="login-username">Username</label>
+                        <input 
+                            type="text" 
+                            id="login-username" 
+                            name="username"
+                            required
+                            minlength="3"
+                            pattern="[a-zA-Z0-9_-]+"
+                            placeholder="Enter your username"
+                        >
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="login-password">Password</label>
+                        <input 
+                            type="password" 
+                            id="login-password" 
+                            name="password"
+                            required
+                            minlength="8"
+                            placeholder="Enter your password"
+                        >
+                        <div class="error-message"></div>
+                    </div>
+                    <button type="submit" class="submit-btn">Login</button>
+                    
+                    <div class="auth-switch">
+                        Don't have an account? <span class="switch-btn" data-tab="signupForm">Sign up</span>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Signup Form -->
+            <div id="signupForm" class="auth-form">
+                <form>
+                    <div class="form-group">
+                        <label for="userType">Type of User</label>
+                        <select 
+                            id="userType" 
+                            name="userType" 
+                            required
+                            title="Select whether you're an individual user or part of a team"
+                        >
+                            <option value="">Select user type</option>
+                            <option value="individual">Individual/Freelancer</option>
+                            <option value="team">Team Member</option>
+                        </select>
+                        <div class="error-message"></div>
+                    </div>
+                    <!-- Profile Type for Individual/Freelancer -->
+                    <div class="form-group profile-type-individual" style="display: none;">
+                        <label for="individualProfileType">Profile Type</label>
+                        <select id="individualProfileType" name="individualProfileType" required
+                        title="Choose your profile type - are you a student or a freelancer?">
+                            <option value="">Select profile type</option>
+                            <option value="student">Student</option>
+                            <option value="freelancer">Freelancer</option>
+                        </select>
+                    </div>
+
+                    <!-- Profile Type for Team Member -->
+                    <div class="form-group profile-type-team" style="display: none;">
+                        <label for="teamProfileType">Profile Type</label>
+                        <select id="teamProfileType" name="teamProfileType" required
+                        title="Select your role within the team">
+                            <option value="">Select profile type</option>
+                            <option value="student">Student</option>
+                            <option value="teacher">Teacher</option>
+                            <option value="professional">Working Professional</option>
+                            <option value="hr">Human Resource (HR)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-username">Username</label>
+                        <input 
+                            type="text" 
+                            id="signup-username" 
+                            name="username"
+                            minlength="3"
+                            pattern="^[a-zA-Z][a-zA-Z0-9._]{2,19}$"
+                            placeholder="Choose a username"
+                            required
+                            title="Username must start with a letter, can contain letters, numbers, underscores, and dots, and be 3-20 characters long"
+                        >
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="firstName">First Name</label>
+                        <input 
+                            type="text" 
+                            id="firstName" 
+                            name="firstName"
+                            minlength="2"
+                            pattern="[A-Za-z]+"
+                            placeholder="Enter your first name"
+                            required
+                            title="Enter your first name using only letters (no numbers or special characters)"
+                        >
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="lastName">Last Name</label>
+                        <input 
+                            type="text" 
+                            id="lastName" 
+                            name="lastName"
+                            minlength="1"
+                            pattern="[A-Za-z]+"
+                            placeholder="Enter your last name"
+                            required
+                            title="Enter your last name using only letters (no numbers or special characters)"
+                        >
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group university-field" style="display: none;">
+                        <label for="universityName">University Name</label>
+                        <input 
+                            type="text" 
+                            id="universityName" 
+                            name="universityName"
+                            minlength="2"
+                            pattern="[A-Za-z]+" 
+                            placeholder="Enter your university's name"
+                            required
+                            title="Enter the full name of your university/educational institution"
+                        >
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group organization-field" style="display: none;">
+                        <label for="organizationName">Organization Name</label>
+                        <input 
+                            type="text" 
+                            id="organizationName" 
+                            name="organizationName"
+                            minlength="2"
+                            pattern="[A-Za-z]+"  
+                            placeholder="Enter your organization's name"
+                            required
+                            title="Enter the full name of your organization/company"
+                        >
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group website-field" style="display: none;">
+                        <label for="organizationWebsite">Organization Website (Optional)</label>
+                        <input 
+                            type="url" 
+                            id="organizationWebsite" 
+                            name="organizationWebsite" 
+                            placeholder="Enter your organization's website (optional)"
+                            pattern="https?://.+"
+                            title="Please enter a valid URL starting with http:// or https://"
+                        >
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email ID</label>
+                        <input 
+                            type="email" 
+                            id="signup-email" 
+                            name="email"
+                            placeholder="Enter your email"
+                            required
+                            title="Enter a valid email address (e.g., example@domain.com)"
+                        >
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="phone">Mobile Number</label>
+                        <div class="phone-input-container">
+                            <select id="countryCode" class="country-code-select" required>
+                                <option value="" selected disabled>Code</option>
+                                <option value="+1">🇺🇸 +1</option>
+                                <option value="+44">🇬🇧 +44</option>
+                                <option value="+91">🇮🇳 +91</option>
+                                <option value="+86">🇨🇳 +86</option>
+                                <option value="+81">🇯🇵 +81</option>
+                                <option value="+49">🇩🇪 +49</option>
+                                <option value="+33">🇫🇷 +33</option>
+                                <option value="+39">🇮🇹 +39</option>
+                                <option value="+7">🇷🇺 +7</option>
+                                <option value="+82">🇰🇷 +82</option>
+                                <option value="+61">🇦🇺 +61</option>
+                                <option value="+55">🇧🇷 +55</option>
+                                <option value="+52">🇲🇽 +52</option>
+                                <option value="+34">🇪🇸 +34</option>
+                                <option value="+1">🇨🇦 +1</option>
+                            </select>
+                            <input 
+                                type="tel" 
+                                id="phone" 
+                                class="phone-input" 
+                                pattern="\(\d{3}\)-\d{3}-\d{4}" 
+                                placeholder="(XXX)-XXX-XXXX" 
+                                required
+                                title="Enter a valid mobile number in format (XXX)-XXX-XXXX"
+                                >
+                        </div>
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input 
+                            type="password" 
+                            id="signup-password" 
+                            name="password1"
+                            minlength="8"
+                            pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                            placeholder="Create a password"
+                            required
+                            title="Password must contain at least 8 characters, including uppercase and lowercase letters, numbers, and special characters"
+                        >
+                        <small class="password-hint">Minimum 8 characters, 1 uppercase, 1 lowercase, 1 number, 1 special character</small>
+                        <div class="error-message"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm-password">Confirm Password</label>
+                        <input 
+                            type="password" 
+                            id="signup-confirm-password" 
+                            name="password2"
+                            minlength="8"
+                            placeholder="Confirm your password"
+                            required
+                            title="Re-enter your password exactly as entered above"
+                        >
+                        <div class="error-message"></div>
+                    </div>
+                    <!-- <div class="form-group">
+                        <div class="captcha-container">
+                            <div class="g-recaptcha" data-sitekey="YOUR_RECAPTCHA_SITE_KEY"></div>
+                        </div>
+                    </div> -->
+                    <button type="submit" class="submit-btn">Sign Up</button>
+
+                    <div class="auth-switch">
+                        Already have an account? <span class="switch-btn" data-tab="loginForm">Login</span>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Footer -->
+    <footer>
+        <div class="social-links">
+            <a href="#" class="facebook" target="_blank" aria-label="Facebook">
+                <i class="fab fa-facebook"></i>
+            </a>
+            <a href="#" class="twitter" target="_blank" aria-label="Twitter">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="#" class="linkedin" target="_blank" aria-label="LinkedIn">
+                <i class="fab fa-linkedin"></i>
+            </a>
+        </div>
+        <p>&copy; 2024 SynergyPro. All rights reserved.</p>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    <script src="{% static 'js/script.js' %}"></script>
+    <script src="{% static 'js/auth/signup.js' %}"></script>
+    <script src="{% static 'js/auth/login.js' %}"></script>
+
+    <!-- Welcome Modal -->
+    <div id="welcomeModal" class="welcome-modal">
+        <div class="welcome-content">
+            <span class="close">&times;</span>
+            <div id="welcomeMessage" class="welcome-message">
+                <div class="welcome-text">Welcome <span class="user-name"></span>,</div>
+                <div class="welcome-subtext">to SynergyPro!!</div>
+            </div>
+        </div>
+    </div>
+    <!--For Toast Message-->
+    <div class="toast" id="toast">
+        <div class="toast-message" id="toast-message"></div>
+        <div class="toast-timeline" id="toast-timeline"></div>
+    </div>
+</body>
+</html>

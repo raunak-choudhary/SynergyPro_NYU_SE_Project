@@ -1,0 +1,16 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>500 - Server Error</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+    <div class="error-container">
+        <h1>500</h1>
+        <h2>Server Error</h2>
+        <p>Something went wrong on our end. Please try again later.</p>
+        <a href="{% url 'home' %}" class="back-btn">Go Back Home</a>
+    </div>
+</body>
+</html>
