@@ -10,7 +10,8 @@ from PIL import Image
 from io import BytesIO
 import random
 from datetime import datetime, timedelta
-from ..utils.message_service import MessageService 
+from ..utils.message_service import MessageService
+from .auth_views import get_dashboard_url
 
 @login_required
 def profile_view(request):
@@ -96,15 +97,36 @@ def profile_view(request):
     return render(request, 'task_management/dashboard/profile.html')
 
 @login_required
+def individual_freelancer_dashboard(request):
+    if request.user.user_type != 'individual' or request.user.profile_type != 'freelancer':
+        # Redirect to appropriate dashboard if wrong user type
+        return redirect(get_dashboard_url(request.user))
+    
+    context = {
+        'user': request.user,
+        'active_projects': 5,
+        'pending_deliverables': 3,
+        'completed_projects': 12,
+        'email_verified': request.user.email_verified,
+        'mobile_verified': request.user.mobile_verified
+    }
+    return render(request, 'task_management/dashboard/individual_freelancer_dashboard.html', context)
+
+@login_required
 def individual_student_dashboard(request):
+    if request.user.user_type != 'individual' or request.user.profile_type != 'student':
+        # Redirect to appropriate dashboard if wrong user type
+        return redirect(get_dashboard_url(request.user))
+    
     context = {
         'user': request.user,
         'total_tasks': 24,
         'in_progress': 8,
-        'completed': 16
+        'completed': 16,
+        'email_verified': request.user.email_verified,
+        'mobile_verified': request.user.mobile_verified
     }
-    return render(request, 'task_management/dashboard/student.html', context)
-
+    return render(request, 'task_management/dashboard/individual_student_dashboard.html', context)
 
 @login_required
 @require_http_methods(["POST"])

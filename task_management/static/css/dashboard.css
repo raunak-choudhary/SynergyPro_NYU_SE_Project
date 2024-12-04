@@ -457,6 +457,10 @@ body {
     padding: 1.5rem;
     border: 1px solid var(--border-color);
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
 }
 
 .help-icon {
@@ -475,34 +479,46 @@ body {
 .help-card h4 {
     color: var(--text-primary);
     font-size: 1.1rem;
-    margin-bottom: 0.75rem;
+    margin: 0 0 0.5rem 0;
 }
 
 .help-card p {
     color: var(--text-secondary);
     font-size: 0.875rem;
-    margin-bottom: 1.25rem;
+    margin: 0 0 1rem 0;
     line-height: 1.5;
 }
 
 .help-btn {
+    display: block;
+    width: 100%;
     background: linear-gradient(135deg,
         var(--rich-purple),
         var(--bright-purple)
     );
-    color: var(--text-primary);
+    color: var(--text-primary) !important; 
+    text-decoration: none; 
     border: none;
-    padding: 0.75rem 1.5rem;
+    padding: 0.75rem;
     border-radius: 8px;
     font-size: 0.875rem;
+    font-weight: 500;
     cursor: pointer;
     transition: all 0.2s ease;
-    width: 100%;
+    text-align: center; 
+    margin-top: 0.5rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .help-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    background: linear-gradient(135deg,
+        var(--bright-purple),
+        var(--rich-purple)
+    );
+    text-decoration: none;
+    color: var(--text-primary) !important;
 }
 
 /* Task Cards Styles */
@@ -650,11 +666,54 @@ body {
     background: rgba(255, 255, 255, 0.1);
 }
 
+.avatar-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
 .avatar-img {
     width: 32px;
     height: 32px;
     border-radius: 50%;
     object-fit: cover;
+    position: relative;
+    z-index: 1;
+}
+
+.verification-ring {
+    position: absolute;
+    top: -2px;
+    left: -2px;
+    right: -2px;
+    bottom: -2px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    pointer-events: none;
+}
+
+.verification-ring.verified {
+    border-color: #10b981; /* Green color for verified */
+}
+
+.verification-ring.not-verified {
+    border-color: #ef4444; /* Red color for not verified */
+}
+
+.verification-warning {
+    position: absolute;
+    bottom: -2px;
+    right: -2px;
+    width: 14px;
+    height: 14px;
+    background-color: #fbbf24; /* Yellow color for warning */
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 10px;
+    color: #000;
+    z-index: 2;
+    border: 2px solid var(--card-bg);
 }
 
 /* Profile Image Section */

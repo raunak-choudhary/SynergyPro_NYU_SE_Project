@@ -4,12 +4,13 @@ class DashboardManager {
         this.attachEventListeners();
         //this.initializeFocusTimer();
         this.updateTaskProgress();
+        this.initializeVerificationStatus();
     }
 
     initializeElements() {
         // Navigation Elements
         this.navItems = document.querySelectorAll('.nav-item');
-        this.helpCenterBtn = document.querySelector('.help-btn');
+        //this.helpCenterBtn = document.querySelector('#helpCenterButton')
 
         // Header Elements
         this.userProfile = document.querySelector('.user-profile');
@@ -43,11 +44,6 @@ class DashboardManager {
     }
 
     attachEventListeners() {
-        // Help Center
-        if (this.helpCenterBtn) {
-            this.helpCenterBtn.addEventListener('click', () => this.showHelpCenter());
-        }
-
         // Sidebar Events
         if (this.sidebarToggle) {
             this.sidebarToggle.addEventListener('click', () => this.toggleSidebar());
@@ -83,6 +79,13 @@ class DashboardManager {
 
         // Outside Click Handler
         document.addEventListener('click', (e) => this.handleOutsideClick(e));
+
+        //Help Center Button
+        /*if (this.helpCenterBtn) {
+            this.helpCenterBtn.addEventListener('click', () => {
+                window.location.href = '/help-center/';
+            });
+        }*/
     }
 
     showHelpCenter() {
@@ -250,6 +253,30 @@ class DashboardManager {
             notification.classList.remove('show');
             setTimeout(() => notification.remove(), 300);
         }, 3000);
+    }
+
+    initializeVerificationStatus() {
+        // Get verification status from user data
+        // You'll need to pass this data from Django to your template
+        const emailVerified = document.querySelector('.user-profile').dataset.emailVerified === 'true';
+        const mobileVerified = document.querySelector('.user-profile').dataset.mobileVerified === 'true';
+        
+        this.updateVerificationStatus(emailVerified, mobileVerified);
+    }
+
+    updateVerificationStatus(emailVerified, mobileVerified) {
+        const verificationRing = document.querySelector('.verification-ring');
+        const verificationWarning = document.querySelector('.verification-warning');
+        
+        if (emailVerified && mobileVerified) {
+            verificationRing.classList.add('verified');
+            verificationRing.classList.remove('not-verified');
+            verificationWarning.style.display = 'none';
+        } else {
+            verificationRing.classList.add('not-verified');
+            verificationRing.classList.remove('verified');
+            verificationWarning.style.display = 'flex';
+        }
     }
 }
 

@@ -1,0 +1,342 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings - SynergyPro</title>
+    <link rel="icon" href="{% static 'images/logo_title.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/settings.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'images/logo.png' %}" alt="SynergyPro" class="logo">
+                <span class="logo-text">SynergyPro</span>
+            </div>
+
+            <div class="nav-section">
+                <span class="section-title">MAIN</span>
+                <a href="{% url 'individual_student_dashboard' %}" class="nav-item">
+                    <span class="nav-icon">📊</span>Overview
+                </a>
+                <a href="{% url 'tasks' %}" class="nav-item">
+                    <span class="nav-icon">📝</span>Tasks
+                </a>
+                <a href="{% url 'calendar' %}" class="nav-item">
+                    <span class="nav-icon">📅</span>Calendar
+                </a>
+                <a href="{% url 'settings' %}" class="nav-item active">
+                    <span class="nav-icon">⚙️</span>Settings
+                </a>
+            </div>
+
+            <!-- Help Center Box -->
+            <div class="help-center-box">
+                <div class="help-card">
+                    <div class="help-icon">?</div>
+                    <h4>Help Center</h4>
+                    <p>Having trouble in learning? Please contact us for more questions.</p>
+                    <button class="help-btn" id="helpCenterButton" onclick="window.location.href='{% url 'help_center' %}'">Go To Help Center</button>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <div class="welcome-message">
+                    <h1>Settings</h1>
+                </div>
+
+                <div class="header-right">
+                    <!-- Notifications Panel-->
+                    <div class="notifications">
+                        <div class="notification-trigger" style="padding: 8px; justify-content: center; align-items: center; display: flex;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            <span class="notification-badge" style="top: -5px; right: -5px;">1</span>
+                        </div>
+                        
+                        <div class="notifications-panel">
+                            <div class="notifications-header">
+                                <h3>Notifications</h3>
+                                <button class="mark-all-read">Mark all as read</button>
+                                <button class="clear-all">Clear All</button>
+                            </div>
+                            
+                            <div class="notifications-list">
+                                <div class="notification-item unread">
+                                    <div class="notification-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 22c1-1 1-2 1-3h-2c0 1 0 2 1 3z"></path>
+                                            <path d="M19 17V11a7 7 0 0 0-14 0v6l-2 2h18l-2-2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p class="notification-message">Task deadline approaching</p>
+                                        <span class="notification-time">Just now</span>
+                                    </div>
+                                </div>
+                                <!-- Add more notification items as needed -->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="profileDropdown" class="user-profile" 
+                        data-email-verified="{{ email_verified|lower }}" 
+                        data-mobile-verified="{{ mobile_verified|lower }}">
+                        <div class="avatar-wrapper">
+                            {% if user.profile_image %}
+                                <img src="{{ user.profile_image.url }}" class="avatar-img" alt="Profile Image">
+                            {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ user.first_name }}+{{ user.last_name }}&background=4B1B7F&color=fff" class="avatar-img" alt="Profile Image">
+                            {% endif %}
+                            <div class="verification-ring"></div>
+                            <div class="verification-warning" style="display: none;">!</div>
+                        </div>
+                        
+                        <div class="profile-dropdown-menu">
+                            <a href="{% url 'profile' %}" class="dropdown-item"><span class="icon">👤</span> Profile</a>
+                            <a href="{% url 'logout' %}" class="dropdown-item"><span class="icon">🚪</span> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Settings Content -->
+            <div class="settings-container">
+                <!-- Settings Navigation -->
+                <div class="settings-nav">
+                    <button class="settings-nav-item active" data-section="account">Account Settings</button>
+                    <button class="settings-nav-item" data-section="appearance">Appearance</button>
+                    <button class="settings-nav-item" data-section="privacy">Privacy & Security</button>
+                    <button class="settings-nav-item" data-section="language">Language & Region</button>
+                    <button class="settings-nav-item" data-section="communication">Communication</button>
+                    <button class="settings-nav-item" data-section="profile">Profile Management</button>
+                </div>
+
+                <!-- Settings Content Sections -->
+                <div class="settings-content">
+                    <!-- Account Settings -->
+                    <section id="account-settings" class="settings-section active">
+                        <h2>Account Settings</h2>
+                        
+                        <div class="settings-card">
+                            <h3>Change Password</h3>
+                            <form id="password-form" class="settings-form">
+                                <div class="form-group">
+                                    <label for="current-password">Current Password</label>
+                                    <input type="password" id="current-password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="new-password">New Password</label>
+                                    <input type="password" id="new-password" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirm-password">Confirm New Password</label>
+                                    <input type="password" id="confirm-password" required>
+                                </div>
+                                <button type="submit" class="settings-button">Update Password</button>
+                            </form>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Email Preferences</h3>
+                            <div class="settings-options">
+                                <div class="toggle-option">
+                                    <label>Task Notifications</label>
+                                    <input type="checkbox" id="email-tasks" checked>
+                                </div>
+                                <div class="toggle-option">
+                                    <label>System Updates</label>
+                                    <input type="checkbox" id="email-updates">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-card danger-zone">
+                            <h3>Delete Account</h3>
+                            <p class="warning-text">This action cannot be undone. All your data will be permanently deleted.</p>
+                            <button class="delete-account-button">Delete My Account</button>
+                        </div>
+                    </section>
+
+                    <!-- Appearance Settings -->
+                    <section id="appearance-settings" class="settings-section">
+                        <h2>Appearance</h2>
+                        <div class="settings-card">
+                            <h3>Theme</h3>
+                            <div class="theme-selector">
+                                <select id="theme-select">
+                                    <option value="light">Light Mode</option>
+                                    <option value="dark">Dark Mode</option>
+                                    <option value="system">System Default</option>
+                                </select>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Privacy & Security -->
+                    <section id="privacy-settings" class="settings-section">
+                        <h2>Privacy & Security</h2>
+                        <div class="settings-card">
+                            <h3>Login History</h3>
+                            <div class="login-history">
+                                <table class="history-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Date & Time</th>
+                                            <th>Device</th>
+                                            <th>Location</th>
+                                            <th>Status</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="login-history-data">
+                                        <!-- Populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Active Sessions</h3>
+                            <div class="active-sessions">
+                                <table class="sessions-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Device</th>
+                                            <th>Location</th>
+                                            <th>Last Active</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="active-sessions-data">
+                                        <!-- Populated by JavaScript -->
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Language & Region -->
+                    <section id="language-settings" class="settings-section">
+                        <h2>Language & Region</h2>
+                        <div class="settings-card">
+                            <h3>Interface Language</h3>
+                            <select id="interface-language">
+                                <option value="en">English</option>
+                                <option value="es">Español</option>
+                                <option value="fr">Français</option>
+                                <option value="de">Deutsch</option>
+                            </select>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Time Zone</h3>
+                            <select id="timezone">
+                                <!-- Populated by JavaScript -->
+                            </select>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Date Format</h3>
+                            <select id="date-format">
+                                <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                            </select>
+                        </div>
+                    </section>
+
+                    <!-- Communication Preferences -->
+                    <section id="communication-settings" class="settings-section">
+                        <h2>Communication Preferences</h2>
+                        <div class="settings-card">
+                            <h3>Preferred Contact Method</h3>
+                            <select id="contact-method">
+                                <option value="email">Email</option>
+                                <option value="mobile">Mobile</option>
+                                <option value="both">Both</option>
+                            </select>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Communication Frequency</h3>
+                            <select id="comm-frequency">
+                                <option value="immediate">Immediate</option>
+                                <option value="daily">Daily Digest</option>
+                                <option value="weekly">Weekly Summary</option>
+                            </select>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Communication Language</h3>
+                            <select id="comm-language">
+                                <option value="en">English</option>
+                                <option value="es">Español</option>
+                                <option value="fr">Français</option>
+                                <option value="de">Deutsch</option>
+                            </select>
+                        </div>
+                    </section>
+
+                    <!-- Profile Management -->
+                    <section id="profile-settings" class="settings-section">
+                        <h2>Profile Management</h2>
+                        <div class="settings-card">
+                            <h3>Verification Status</h3>
+                            <div class="verification-status">
+                                <div class="status-item">
+                                    <span class="status-label">Email Verification</span>
+                                    <span class="status-value" id="email-status">
+                                        {% if email_verified %}
+                                            <span class="verified">Verified</span>
+                                        {% else %}
+                                            <span class="not-verified">Not Verified</span>
+                                            <button class="verify-button" data-type="email">Verify Now</button>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                                <div class="status-item">
+                                    <span class="status-label">Mobile Verification</span>
+                                    <span class="status-value" id="mobile-status">
+                                        {% if mobile_verified %}
+                                            <span class="verified">Verified</span>
+                                        {% else %}
+                                            <span class="not-verified">Not Verified</span>
+                                            <button class="verify-button" data-type="mobile">Verify Now</button>
+                                        {% endif %}
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="settings-card">
+                            <h3>Bio/About Me</h3>
+                            <form id="bio-form">
+                                <div class="form-group">
+                                    <label for="bio">Tell us about yourself</label>
+                                    <textarea id="bio" rows="4">{{ user.bio }}</textarea>
+                                </div>
+                                <button type="submit" class="settings-button">Update Bio</button>
+                            </form>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scripts -->
+    {% csrf_token %}
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="{% static 'js/settings-manager.js' %}"></script>
+</body>
+</html>

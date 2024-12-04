@@ -1,0 +1,216 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Help Center - SynergyPro</title>
+    <link rel="icon" href="{% static 'images/logo_title.png' %}" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/help_center.css' %}">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'images/logo.png' %}" alt="SynergyPro" class="logo">
+                <span class="logo-text">SynergyPro</span>
+            </div>
+    
+            <div class="nav-section">
+                <span class="section-title">MAIN</span>
+                <a href="{% url 'individual_student_dashboard' %}" class="nav-item">
+                    <span class="nav-icon">📊</span>
+                    Overview
+                </a>
+                <a href="{% url 'tasks' %}" class="nav-item">
+                    <span class="nav-icon">📝</span>
+                    Tasks
+                </a>
+                <a href="{% url 'calendar' %}" class="nav-item">
+                    <span class="nav-icon">📅</span>
+                    Calendar
+                </a>
+                <a href="{% url 'settings' %}" class="nav-item">
+                    <span class="nav-icon">⚙️</span>
+                    Settings
+                </a>
+            </div>
+    
+            <!-- Help Center Box -->
+            <div class="help-center-box">
+                <div class="help-card">
+                    <div class="help-icon">?</div>
+                    <h4>Help Center</h4>
+                    <p>Having trouble in learning? Please contact us for more questions.</p>
+                    <button class="help-btn" id="helpCenterButton" onclick="window.location.href='{% url 'help_center' %}'">Go To Help Center</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="dashboard-header">
+                <div class="welcome-message">
+                    <h1>Help Center</h1>
+                    <p>Get the support you need to succeed</p>
+                </div>
+
+                <div class="header-right">
+                    <!-- Notifications Panel-->
+                    <div class="notifications">
+                        <div class="notification-trigger">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            <span class="notification-badge">1</span>
+                        </div>
+                        
+                        <div class="notifications-panel">
+                            <div class="notifications-header">
+                                <h3>Notifications</h3>
+                                <button class="mark-all-read">Mark all as read</button>
+                                <button class="clear-all">Clear All</button>
+                            </div>
+                            
+                            <div class="notifications-list">
+                                <div class="notification-item unread">
+                                    <div class="notification-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 22c1-1 1-2 1-3h-2c0 1 0 2 1 3z"></path>
+                                            <path d="M19 17V11a7 7 0 0 0-14 0v6l-2 2h18l-2-2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p class="notification-message">Task deadline approaching</p>
+                                        <span class="notification-time">Just now</span>
+                                    </div>
+                                </div>
+                                <!-- Add more notification items as needed -->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="profileDropdown" class="user-profile" 
+                        data-email-verified="{{ email_verified|lower }}" 
+                        data-mobile-verified="{{ mobile_verified|lower }}">
+                        <div class="avatar-wrapper">
+                            {% if user.profile_image %}
+                                <img src="{{ user.profile_image.url }}" class="avatar-img" alt="Profile Image">
+                            {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ user.first_name }}+{{ user.last_name }}&background=4B1B7F&color=fff" class="avatar-img" alt="Profile Image">
+                            {% endif %}
+                            <div class="verification-ring"></div>
+                            <div class="verification-warning" style="display: none;">!</div>
+                        </div>
+                        
+                        <div class="profile-dropdown-menu">
+                            <a href="{% url 'profile' %}" class="dropdown-item"><span class="icon">👤</span> Profile</a>
+                            <a href="{% url 'logout' %}" class="dropdown-item"><span class="icon">🚪</span> Logout</a>
+                        </div>
+                    </div>
+                </div>   
+            </header>
+
+            <!-- Help Center Content -->
+            <div class="dashboard-content">
+
+                <!-- Learning Paths Section -->
+                <section class="learning-paths-section">
+                    <h2 class="help-section-title">Recommended for You</h2>
+                    <div class="row g-4">
+                        {% for path in learning_paths %}
+                            <div class="col-md-4">
+                                <div class="learning-path-card">
+                                    <div class="path-icon">{{ path.icon|safe }}</div>
+                                    <h3>{{ path.title }}</h3>
+                                    <p>{{ path.description }}</p>
+                                    <div class="progress">
+                                        <div class="progress-bar" role="progressbar" 
+                                             style="width: {{ path.progress }}%" 
+                                             aria-valuenow="{{ path.progress }}" 
+                                             aria-valuemin="0" 
+                                             aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                    <span class="progress-text">{{ path.progress }}% Complete</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+
+                <!-- Articles Section -->
+                <div class="section articles-section">
+                    <h2 class="help-section-title">Trending Articles</h2>
+                    
+                    <div class="row g-4">
+                        {% for article in articles %}
+                            <div class="col-md-6">
+                                <article class="article-card">
+                                    <span class="article-category">{{ article.category|upper }}</span>
+                                    
+                                    <h3 class="article-title">{{ article.title }}</h3>
+                                    
+                                    <div class="article-highlight">
+                                        {{ article.highlight }}
+                                    </div>
+                                    
+                                    <div class="article-footer">
+                                        <div class="article-meta">
+                                            <div class="claps-container">
+                                                <span class="clap-icon" data-claps="{{ article.claps_count }}">👏</span>
+                                                <div class="claps-tooltip">
+                                                    <span class="claps-count">{{ article.claps_count }} claps</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <button class="next-article-btn" data-article-id="{{ article.url }}" data-category="{{ article.category }}">
+                                                <span class="btn-text">Next Article</span>
+                                                <span class="refresh-icon">⟳</span>
+                                            </button>
+                                            
+                                            {% if article.published_date %}
+                                                <span class="article-date">{{ article.published_date }}</span>
+                                            {% endif %}
+                                        </div>
+                                        
+                                        <a href="{{ article.url }}" class="article-link" target="_blank" rel="noopener">
+                                            Read More <span class="arrow">→</span>
+                                        </a>
+                                    </div>
+                                </article>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <!-- Tools Section -->
+                <section class="tools-section">
+                    <h2 class="help-section-title">Tools & Resources</h2>
+                    <div class="row g-4">
+                        {% for tool in tools %}
+                            <div class="col-md-4">
+                                <div class="tool-card">
+                                    <div class="tool-icon">{{ tool.icon|safe }}</div>
+                                    <h3>{{ tool.title }}</h3>
+                                    <p>{{ tool.description }}</p>
+                                    <a href="{{ tool.file_path }}" class="tool-download">Download →</a>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="{% static 'js/help-center-manager.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
