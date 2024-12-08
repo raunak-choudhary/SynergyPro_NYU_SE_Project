@@ -357,5 +357,10 @@ def delete_task_file(request, task_id, file_id):
             
     except Exception as e:
         return JsonResponse({'error': str(e)}, status=500)
-    
+
+@login_required
+def categories_api(request):
+    categories = TaskCategory.objects.filter(user=request.user).order_by('name')
+    categories_data = [{'id': category.id, 'name': category.name} for category in categories]
+    return JsonResponse(categories_data, safe=False)
     

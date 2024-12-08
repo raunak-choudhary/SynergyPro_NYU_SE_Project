@@ -1,8 +1,9 @@
 class TaskManager {
     constructor() {
-        this.initializeElements();
-        this.attachEventListeners();
-        this.fetchTasks();
+      this.initializeElements();
+      this.attachEventListeners();
+      this.initializeFilters();
+      this.fetchTasks();
     }
 
     initializeElements() {
@@ -314,6 +315,8 @@ class TaskManager {
         const taskCard = document.createElement('div');
         taskCard.className = 'task-card';
         taskCard.dataset.taskId = task.id;
+        taskCard.dataset.status = task.status;
+        taskCard.dataset.categoryId = task.category ? task.category.id : '';
     
         // Add a unique identifier to the JS-generated template
         const template = `
@@ -449,7 +452,7 @@ class TaskManager {
                 </div>`;
         }
     
-        const end = new Date(endDate);
+        const end = new Date(endDate + 'T00:00:00');
         const now = new Date();
         const diffInHours = Math.ceil((end - now) / (1000 * 60 * 60));
         const diffInDays = Math.ceil(diffInHours / 24);
@@ -549,6 +552,54 @@ class TaskManager {
 
     getCsrfToken() {
         return document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    }
+
+    initializeFilters() {
+      this.statusFilter = document.getElementById('statusFilter');
+      this.categoryFilter = document.getElementById('categoryFilter');
+
+      this.statusFilter.addEventListener('change', () => this.applyFilters());
+      this.categoryFilter.addEventListener('change', () => this.applyFilters());
+
+      this.populateCategoryFilter();
+    }
+
+    async populateCategoryFilter() {
+      try {
+        const response = await fetch('/api/categories/');
+        if (!response.ok) throw new Error('Failed to fetch categories');
+        const categories = await response.json();
+
+        categories.forEach(category => {
+          const option = document.createElement('option');
+          option.value = category.id;
+          option.textContent = category.name;
+          this.categoryFilter.appendChild(option);
+        });
+      } catch (error) {
+        this.handleError(error, 'Error loading categories');
+      }
+    }
+
+    applyFilters() {
+      const statusFilter = this.statusFilter.value;
+      const categoryFilter = this.categoryFilter.value;
+
+      this.sections.forEach(section => {
+        if (section.wrapper) {
+          const tasks = section.wrapper.querySelectorAll('.task-card');
+          tasks.forEach(task => {
+            const taskStatus = task.dataset.status;
+            const taskCategory = task.dataset.categoryId;
+            const statusMatch = !statusFilter || taskStatus === statusFilter;
+            const categoryMatch = !categoryFilter || taskCategory === categoryFilter;
+            task.style.display = statusMatch && categoryMatch ? 'block' : 'none';
+          });
+        }
+      });
+
+      this.updateTaskCounts();
+      this.updateAllArrowsVisibility();
     }
 }
 
