@@ -1,5 +1,6 @@
 class CalendarManager {
     constructor() {
+        this.userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         this.currentDate = new Date();
         this.currentView = 'month';
 
@@ -95,65 +96,119 @@ class CalendarManager {
         return dateTime instanceof Date && !isNaN(dateTime);
     }
 
+    showNotification(message, type = 'success') {
+        const toastContainer = document.querySelector('.toast-container') || (() => {
+            const container = document.createElement('div');
+            container.className = 'toast-container';
+            document.body.appendChild(container);
+            return container;
+        })();
+    
+        const toast = document.createElement('div');
+        toast.className = `toast toast-${type}`;
+        
+        // Create toast content with SVG icon
+        const iconSVG = type === 'success' 
+            ? '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+            : '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+        
+        toast.innerHTML = `
+            <div class="toast-icon">${iconSVG}</div>
+            <div class="toast-message">${message}</div>
+            <div class="toast-close">×</div>
+        `;
+        
+        toastContainer.appendChild(toast);
+    
+        // Add click handler for close button
+        const closeBtn = toast.querySelector('.toast-close');
+        closeBtn.onclick = () => {
+            toast.style.animation = 'slideOut 0.5s ease-out forwards';
+            setTimeout(() => toastContainer.removeChild(toast), 500);
+        };
+    
+        // Auto remove after 3 seconds
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.style.animation = 'slideOut 0.5s ease-out forwards';
+                setTimeout(() => {
+                    if (toast.parentElement) {
+                        toastContainer.removeChild(toast);
+                    }
+                }, 500);
+            }
+        }, 3000);
+    }
+
     initializeTaskModal() {
         const modal = document.getElementById('taskModal');
         const closeBtn = modal.querySelector('.close');
         const cancelBtn = modal.querySelector('.cancel-btn');
         const taskForm = document.getElementById('taskForm');
-
-        // Close modal handlers
-        if (closeBtn) {
-            closeBtn.addEventListener('click', () => {
-                modal.style.display = 'none';
-                taskForm.reset();
-            });
-        }
-
-        if (cancelBtn) {
-            cancelBtn.addEventListener('click', () => {
-                modal.style.display = 'none';
-                taskForm.reset();
-            });
-        }
-
-        // Close on outside click
-        window.addEventListener('click', (event) => {
-            if (event.target === modal) {
-                modal.style.display = 'none';
-                taskForm.reset();
-            }
+    
+        closeBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            taskForm.reset();
+        });
+    
+        cancelBtn.addEventListener('click', () => {
+            modal.style.display = 'none';
+            taskForm.reset();
         });
 
-        function isValidDate(dateString) {
-            return !isNaN(new Date(dateString).getTime());
-        };
-
+        const timeInputs = modal.querySelectorAll('input[type="time"]');
+        timeInputs.forEach(input => {
+            if (!input.value) {
+                input.value = '00:00';
+            }
+        });
+    
         taskForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-
-            // Get form values
-            const title = document.getElementById('taskTitle').value;
-            const startDate = document.getElementById('taskStartDate').value;
-            const startTime = document.getElementById('taskStartTime').value;
-            const endDate = document.getElementById('taskEndDate').value;
-            const endTime = document.getElementById('taskEndTime').value;
-
-            // Create timezone-aware datetime strings
-            const startDateTime = new Date(`${startDate}T${startTime}`);
-            const endDateTime = new Date(`${endDate}T${endTime}`);
-
-            // Add timezone offset to make them timezone-aware
-            const startDateTimeString = startDateTime.toISOString();
-            const endDateTimeString = endDateTime.toISOString();
-
-            const formData = new FormData();
-            formData.append('title', title);
-            formData.append('start_date', startDateTimeString);
-            formData.append('end_date', endDateTimeString);
-            formData.append('description', document.getElementById('taskDescription').value || '');
-            formData.append('status', 'yet_to_start');
-
+            const submitBtn = document.querySelector('.submit-btn');
+            submitBtn.disabled = true;
+        
             try {
+                const formData = new FormData();
+                const title = document.getElementById('taskTitle').value.trim();
+                const startDate = document.getElementById('taskStartDate').value;
+                const startTime = document.getElementById('taskStartTime').value;
+                const endDate = document.getElementById('taskEndDate').value;
+                const endTime = document.getElementById('taskEndTime').value;
+        
+                // Validation checks
+                if (!title) throw new Error('Please enter a task title');
+                if (!startDate) throw new Error('Please select a start date');
+                if (!startTime) throw new Error('Please select a start time');
+                if (!endDate) throw new Error('Please select an end date');
+                if (!endTime) throw new Error('Please select an end time');
+
+                // Format time to HH:MM
+                const formatTime = (time) => time.slice(0, 5);
+                const formattedStartTime = formatTime(startTime);
+                const formattedEndTime = formatTime(endTime);
+
+                const startDateTime = new Date(`${startDate}T${formattedStartTime}`);
+                const endDateTime = new Date(`${endDate}T${formattedEndTime}`);
+        
+                if (endDateTime < startDateTime) {
+                    throw new Error('End date/time must be after start date/time');
+                }
+        
+                formData.append('title', title);
+                formData.append('description', document.getElementById('taskDescription').value.trim());
+                formData.append('priority', document.querySelector('input[name="priority"]:checked').value);
+                formData.append('start_date', startDate);
+                formData.append('start_time', formattedStartTime);
+                formData.append('end_date', endDate);
+                formData.append('end_time', formattedEndTime);
+
+                const formDataObj = {};
+                formData.forEach((value, key) => {
+                    formDataObj[key] = value;
+                });
+                console.log('FormData being sent:', formDataObj);
+        
                 const response = await fetch('/api/tasks/create/', {
                     method: 'POST',
                     headers: {
@@ -161,21 +216,29 @@ class CalendarManager {
                     },
                     body: formData
                 });
-
+        
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+        
                 const data = await response.json();
-
                 if (data.success) {
-                    alert('Task created successfully!');
                     modal.style.display = 'none';
                     taskForm.reset();
-                    this.renderMonthView();
+                    if (this.currentView === 'month') {
+                        this.renderMonthView();
+                    } else {
+                        this.renderWeekView();
+                    }
+                    this.showNotification(data.message || 'Task created successfully!', 'success');
                 } else {
-                    console.log(data);
-                    alert('Error creating task: ' + (data.error || 'Unknown error'));
+                    throw new Error(data.error || 'Unable to create task. Please try again.');
                 }
             } catch (error) {
-                console.error('Error:', error);
-                alert('An error occurred while creating the task.');
+                console.error('Task creation error:', error);
+                this.showNotification(error.message, 'error');
+            } finally {
+                submitBtn.disabled = false;
             }
         });
     }
@@ -186,42 +249,60 @@ class CalendarManager {
         const startTimeInput = document.getElementById('taskStartTime');
         const endDateInput = document.getElementById('taskEndDate');
         const endTimeInput = document.getElementById('taskEndTime');
-
-        // Ensure dateTime is a valid Date object
-        const date = dateTime instanceof Date ? dateTime : new Date(dateTime);
-
-        if (!(date instanceof Date && !isNaN(date))) {
-            console.error('Invalid date format');
-            return;
+    
+        // Debug logs
+        console.log('Original dateTime:', dateTime);
+        console.log('Date object:', new Date(dateTime));
+    
+        // Ensure dateTime is a Date object and handle timezone
+        let date = dateTime instanceof Date ? dateTime : new Date(dateTime);
+        console.log('Processed date:', date);
+        
+        // Adjust for local timezone offset
+        const localDate = new Date(date.getTime() - (date.getTimezoneOffset() * 60000));
+        console.log('Local date:', localDate);
+    
+        if (this.currentView === 'month') {
+            // For month view, ensure we're working with start of day
+            const startOfDay = new Date(localDate);
+            startOfDay.setHours(0, 0, 0, 0);
+            
+            startDateInput.value = this.formatDate(startOfDay);
+            startTimeInput.value = '00:00'; // Use 24-hour format
+            console.log('Month view - Start date:', startDateInput.value);
+            console.log('Month view - Start time:', startTimeInput.value);
+        } else {
+            startDateInput.value = this.formatDate(localDate);
+            const hours = date.getHours().toString().padStart(2, '0');
+            startTimeInput.value = `${hours}:00`; // Use 24-hour format
+            console.log('Week view - Start date:', startDateInput.value);
+            console.log('Week view - Start time:', startTimeInput.value);
         }
-
-        // Format date and time
-        const formattedDate = this.formatDate(date);
-        const formattedTime = date.getHours().toString().padStart(2, '0') + ':00';
-
-        // Set default values
-        startDateInput.value = formattedDate;
-        startTimeInput.value = formattedTime;
-
-        // Set end date and time (default to 1 hour later)
-        const endDate = new Date(date);
-        endDate.setHours(date.getHours() + 1);
-        endDateInput.value = this.formatDate(endDate);
-        endTimeInput.value = endDate.getHours().toString().padStart(2, '0') + ':00';
-
+    
+        // Clear and set default end time
+        endDateInput.value = '';
+        endTimeInput.value = '00:00'; // Use 24-hour format
+    
         modal.style.display = 'block';
     }
 
     formatDate(date) {
-        try {
-            if (!(date instanceof Date) || isNaN(date)) {
-                throw new Error('Invalid date');
-            }
-            return date.toISOString().split('T')[0];
-        } catch (error) {
-            console.error('Date formatting error:', error);
+        if (!(date instanceof Date) || isNaN(date)) {
+            console.error('Invalid date:', date);
             return '';
         }
+        
+        const year = date.getFullYear();
+        const month = String(date.getMonth() + 1).padStart(2, '0');
+        const day = String(date.getDate()).padStart(2, '0');
+        const formatted = `${year}-${month}-${day}`;
+        console.log('Formatting date:', date, 'to:', formatted);
+        return formatted;
+    } 
+
+    formatDateTimeForAPI(date, time) {
+        const datetime = new Date(`${date}T${time}`);
+        return datetime.toLocaleString('en-US', { timeZone: this.userTimezone });
     }
 
     renderMonthView() {
@@ -285,34 +366,30 @@ class CalendarManager {
         const modal = document.getElementById('taskModal');
         const startDateInput = document.getElementById('taskStartDate');
         const startTimeInput = document.getElementById('taskStartTime');
-
-        // Ensure dateTime is a Date object
-        const date = typeof dateTime === 'string' ? new Date(dateTime) : dateTime;
-
-        // Format date and time
-        const formattedDate = this.formatDate(date);
-        const formattedTime = date.getHours().toString().padStart(2, '0') + ':00';
-
-        // Set values
-        if (startDateInput) {
-            startDateInput.value = formattedDate;
-        }
-        if (startTimeInput) {
-            startTimeInput.value = formattedTime;
-        }
-
-        // Set minimum date for end date input
         const endDateInput = document.getElementById('taskEndDate');
-        if (endDateInput) {
-            endDateInput.min = formattedDate;
+        const endTimeInput = document.getElementById('taskEndTime');
+    
+        // Ensure dateTime is a Date object and handle timezone
+        let date = dateTime instanceof Date ? dateTime : new Date(dateTime);
+        
+        // Create a date object for the start of the selected day
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+    
+        if (this.currentView === 'month') {
+            // For month view, set start time to 00:00
+            startDateInput.value = this.formatDate(startOfDay);
+            startTimeInput.value = '00:00';
+        } else {
+            // For week view, use clicked hour
+            startDateInput.value = this.formatDate(date);
+            startTimeInput.value = `${date.getHours().toString().padStart(2, '0')}:00`;
         }
-
-        // Update modal title and show
-        const modalTitle = modal.querySelector('h2');
-        if (modalTitle) {
-            modalTitle.textContent = 'Create Task';
-        }
-
+    
+        // Clear and set default end time
+        endDateInput.value = '';
+        endTimeInput.value = '00:00';
+    
         modal.style.display = 'block';
     }
 
@@ -322,8 +399,8 @@ class CalendarManager {
             return '';
         }
         const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, '0');
-        const day = String(date.getDate()).padStart(2, '0');
+        const month = (date.getMonth() + 1).toString().padStart(2, '0');
+        const day = date.getDate().toString().padStart(2, '0');
         return `${year}-${month}-${day}`;
     }
 
@@ -408,19 +485,23 @@ class CalendarManager {
         for (let hour = 0; hour < 24; hour++) {
             const hourSlot = document.createElement('div');
             hourSlot.className = 'hour-slot';
+            hourSlot.setAttribute('data-hour', hour);
+            
             if (isToday && new Date().getHours() === hour) {
                 hourSlot.classList.add('current-hour');
             }
-
+    
             hourSlot.addEventListener('click', () => {
                 const selectedDateTime = new Date(date);
                 selectedDateTime.setHours(hour);
+                selectedDateTime.setMinutes(0);
+                selectedDateTime.setSeconds(0);
                 this.openTaskModal(selectedDateTime);
             });
-
+    
             dayColumn.appendChild(hourSlot);
         }
-
+    
         return dayColumn;
     }
 
@@ -434,7 +515,15 @@ class CalendarManager {
     createDayElement(day, additionalClass = '') {
         const dayElement = document.createElement('div');
         dayElement.className = `calendar-cell ${additionalClass}`;
-        dayElement.dataset.date = this.formatDate(new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), day));
+        
+        // Create date at beginning of day
+        const cellDate = new Date(this.currentDate.getFullYear(), this.currentDate.getMonth(), day);
+        cellDate.setHours(0, 0, 0, 0);
+        
+        console.log('Creating cell for day:', day);
+        console.log('Cell date:', cellDate);
+        
+        dayElement.dataset.date = cellDate.toISOString();
         
         const dateSpan = document.createElement('span');
         dateSpan.className = 'date';
@@ -442,10 +531,10 @@ class CalendarManager {
         
         const tasksDiv = document.createElement('div');
         tasksDiv.className = 'tasks';
-
+    
         dayElement.appendChild(dateSpan);
         dayElement.appendChild(tasksDiv);
-
+    
         return dayElement;
     }
 

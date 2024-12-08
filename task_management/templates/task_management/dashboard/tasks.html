@@ -41,7 +41,7 @@
                     <div class="help-icon">?</div>
                     <h4>Help Center</h4>
                     <p>Having trouble in learning? Please contact us for more questions.</p>
-                    <a href="#" class="help-btn">Go To Help Center</a>
+                    <button class="help-btn" id="helpCenterButton" onclick="window.location.href='{% url 'help_center' %}'">Go To Help Center</button>
                 </div>
             </div>
         </div>
@@ -193,22 +193,23 @@
 
     <!-- Template for task card -->
     <template id="task-card-template">
-        <div class="task-card" data-task-id="">
-            <div class="task-header">
-                <h3 class="task-title"></h3>
-                <div class="task-category"></div>
-            </div>
-            <p class="task-description"></p>
-            <div class="task-footer">
-                <div class="task-progress">
-                    <div class="progress-bar">
-                        <div class="progress-fill"></div>
-                    </div>
+        <div class="title-section">
+            <h4 class="task-title"></h4>
+            <span class="priority-label"></span>
+            <span class="category-label"></span>
+        </div>
+        <div class="task-footer">
+            <div class="task-progress-section">
+                <div class="progress-header">
+                    <span class="progress-label"></span>
                     <span class="progress-text"></span>
                 </div>
-                <div class="task-meta">
-                    <span class="due-date"></span>
+                <div class="progress-bar">
+                    <div class="progress-fill"></div>
                 </div>
+            </div>
+            <div class="task-meta">
+                <span class="due-date"></span>
             </div>
         </div>
     </template>

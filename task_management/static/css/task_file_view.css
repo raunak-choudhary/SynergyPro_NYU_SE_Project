@@ -1,0 +1,357 @@
+.file-viewer-container {
+    display: flex;
+    gap: 2rem;
+    padding: 2rem;
+    height: calc(100vh - 100px);
+    width: 100%;
+}
+
+.document-viewer {
+    flex: 1;
+    min-width: 0;  /* Add this */
+    background: #1E1E2D;
+    border-radius: 12px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.document-content {
+    flex: 1;
+    height: 100%;
+    min-height: 0;
+    overflow: auto;
+    padding: 1rem;
+}
+
+.placeholder-text {
+    color: #6c757d;
+    text-align: center;
+    padding: 2rem;
+    font-size: 1.1rem;
+}
+
+.file-list {
+    flex: 0 0 300px;
+    background: #1E1E2D;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-left: auto;
+    max-width: 350px;
+}
+
+.files-container {
+    height: calc(100% - 3rem);
+    overflow-y: auto;
+    margin-top: 1rem;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1rem;
+    background: rgba(75, 27, 127, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.file-item:hover {
+    background: rgba(75, 27, 127, 0.6);
+    transform: translateY(-1px);
+}
+
+.file-item.active {
+    background: rgba(75, 27, 127, 0.8);
+    border-color: rgba(255, 255, 255, 0.3);
+}
+
+.file-item-name {
+    flex: 1;
+    cursor: pointer;
+    color: #fff;
+    margin-right: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+}
+
+.file-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Button Styling */
+.btn-download, 
+.btn-delete {
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    border: none;
+}
+
+.btn-download {
+    background: #3699FF;
+    color: white;
+}
+
+.btn-download:hover {
+    background: #1f7fea;
+    transform: translateY(-1px);
+}
+
+.btn-delete {
+    background: #F64E60;
+    color: white;
+}
+
+.btn-delete:hover {
+    background: #ee2939;
+    transform: translateY(-1px);
+}
+
+/* Delete Modal Styling */
+.modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.7);
+    z-index: 1000;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    backdrop-filter: blur(8px);
+}
+
+.modal.show {
+    display: flex;
+    opacity: 1;
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: rgba(75, 27, 127, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 16px;
+    width: 90%;
+    max-width: 400px;
+    transform: scale(0.7);
+    transition: transform 0.3s ease;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+    pointer-events: auto;
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+.modal-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 16px 16px 0 0;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.modal-footer {
+    padding: 1.25rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.close-modal {
+    background: none;
+    border: none;
+    color: rgba(255, 255, 255, 0.6);
+    font-size: 24px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    padding: 0;
+    margin: 0;
+}
+
+.close-modal:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.cancel-delete {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #fff;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancel-delete:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-1px);
+}
+
+.confirm-delete {
+    background: #F64E60;
+    border: none;
+    color: white;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.confirm-delete:hover {
+    background: #ee2939;
+    transform: translateY(-1px);
+}
+
+.loading-indicator {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #fff;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid rgba(255, 255, 255, 0.1);
+    border-top-color: #3699FF;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.error-message {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    color: #F64E60;
+    text-align: center;
+}
+
+.error-message small {
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 0.5rem;
+}
+
+.file-preview {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem;
+    text-align: center;
+}
+
+.download-link {
+    display: inline-block;
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: #3699FF;
+    color: white;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.download-link:hover {
+    background: #1f7fea;
+    transform: translateY(-1px);
+}
+
+/* For PDF viewers */
+.document-content object,
+.document-content iframe {
+    border: none;
+    background: white;
+    border-radius: 8px;
+}
+
+/* Toast Notification */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    min-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.5s ease-out forwards;
+    background: #E7F6E7;
+    border-left: 4px solid #2E7D32;
+}
+
+.toast-success {
+    background: #E7F6E7;
+    border-left: 4px solid #2E7D32;
+    color: #1B5E20;
+}
+
+.toast-error {
+    background: #FFEBEE;
+    border-left: 4px solid #C62828;
+    color: #B71C1C;
+}
+
+.toast-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+.toast-message {
+    font-weight: 500;
+    font-size: 14px;
+    flex-grow: 1;
+}
+
+.toast-close {
+    cursor: pointer;
+    opacity: 0.7;
+    margin-left: 12px;
+}
+
+/* For images */
+.document-content img {
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}

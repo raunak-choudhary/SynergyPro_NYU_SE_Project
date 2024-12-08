@@ -457,45 +457,55 @@
     gap: 1.5rem;
 }
 
-/* Notifications Panel */
-.notifications {
-    position: relative;
-}
-
-.notification-trigger {
-    cursor: pointer;
-}
-
-.notifications-panel {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    width: 330px;
-    background: var(--card-bg);
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+/* Toast Notification Section */
+.toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
     z-index: 1000;
-    display: none;
 }
 
-.notifications-panel.show {
-    display: block;
-}
-
-.notifications-header {
+.toast {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem;
-    border-bottom: 1px solid var(--border-color);
+    padding: 16px 20px;
+    border-radius: 12px;
+    margin-bottom: 10px;
+    min-width: 300px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    animation: slideIn 0.5s ease-out forwards;
 }
 
-.notifications-header-actions {
-    display: flex;
-    gap: 1rem;
-    white-space: nowrap;
+.toast-success {
+    background: #E7F6E7;
+    border-left: 4px solid #2E7D32;
+    color: #1B5E20;
 }
+
+.toast-error {
+    background: #FFEBEE;
+    border-left: 4px solid #C62828;
+    color: #B71C1C;
+}
+
+.toast-icon {
+    margin-right: 12px;
+    display: flex;
+    align-items: center;
+}
+
+.toast-message {
+    font-weight: 500;
+    font-size: 14px;
+    flex-grow: 1;
+}
+
+.toast-close {
+    cursor: pointer;
+    opacity: 0.7;
+    margin-left: 12px;
+}
+
 
 /* Responsive Design */
 @media (max-width: 1024px) {
@@ -534,98 +544,247 @@
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
-    background-color: rgba(0,0,0,0.4);
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
 }
 
 .modal-content {
-    background-color: #fefefe;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
+    background: var(--card-bg);
+    margin: 10% auto;
+    width: 90%;
     max-width: 500px;
+    max-height: 80vh;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    overflow-y: auto;
+}
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h2 {
+    margin: 0;
+    color: var(--text-primary);
+    font-size: 1.25rem;
 }
 
 .close {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close:hover,
-.close:focus {
-    color: black;
-    text-decoration: none;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
     cursor: pointer;
+    transition: color 0.2s ease;
 }
 
-#taskForm input,
-#taskForm textarea {
+.close:hover {
+    color: var(--text-primary);
+}
+
+#taskForm {
+    padding: 1.25rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+    max-height: 150px;
+}
+
+.form-group input,
+.form-group textarea {
     width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    border: 1px solid #ddd;
-    border-radius: 4px;
+    padding: 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-primary);
+    font-size: 0.875rem;
+    transition: all 0.2s ease;
 }
 
-#taskForm button {
-    background-color: #4CAF50;
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-#taskForm button:hover {
-    background-color: #45a049;
+.form-group input:focus,
+.form-group textarea:focus {
+    border-color: var(--bright-purple);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(155, 47, 147, 0.2);
 }
 
 .datetime-group {
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 1rem;
+    margin-bottom: 1rem;
 }
 
-.datetime-group input {
+.priority-group {
+    margin-bottom: 1.25rem;
+}
+
+.priority-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--text-secondary);
+    font-size: 0.875rem;
+    /* Add these to match other labels */
+    font-family: inherit;
+    font-weight: normal;
+}
+
+.priority-buttons {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.priority-buttons input[type="radio"] {
+    display: none;
+}
+
+.priority-btn {
     flex: 1;
-}
-
-.hour-slot {
-    height: 60px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.5rem;
+    text-align: center;
+    border-radius: 6px;
     cursor: pointer;
-    transition: background-color 0.2s ease;
+    transition: all 0.2s ease;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--text-secondary);
 }
 
-.hour-slot:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+.priority-btn.low {
+    border-color: rgba(46, 213, 115, 0.3);
 }
 
-.current-hour {
-    background-color: rgba(108, 92, 231, 0.2);
+.priority-btn.medium {
+    border-color: rgba(255, 171, 0, 0.3);
 }
 
-.datetime-inputs {
+.priority-btn.high {
+    border-color: rgba(255, 71, 87, 0.3);
+}
+
+input[type="radio"]:checked + .priority-btn.low {
+    background: rgba(46, 213, 115, 0.2);
+    border-color: rgba(46, 213, 115, 0.5);
+    color: #2ed573;
+}
+
+input[type="radio"]:checked + .priority-btn.medium {
+    background: rgba(255, 171, 0, 0.2);
+    border-color: rgba(255, 171, 0, 0.5);
+    color: #ffab00;
+}
+
+input[type="radio"]:checked + .priority-btn.high {
+    background: rgba(255, 71, 87, 0.2);
+    border-color: rgba(255, 71, 87, 0.5);
+    color: #ff4757;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator,
+input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0.7);  /* Makes icons visible in dark theme */
+    cursor: pointer;
+    opacity: 0.8;
+}
+
+input[type="date"]::-webkit-calendar-picker-indicator:hover,
+input[type="time"]::-webkit-calendar-picker-indicator:hover {
+    opacity: 1;
+}
+
+.modal-footer {
     display: flex;
+    justify-content: flex-end;
     gap: 1rem;
+    margin-top: 1.5rem;
 }
 
-.datetime-inputs input {
-    flex: 1;
-    padding: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 4px;
+.modal-footer button {
+    padding: 0.75rem 1.5rem;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.cancel-btn {
     background: rgba(255, 255, 255, 0.1);
-    color: white;
+    color: var(--text-secondary);
 }
 
-.datetime-inputs input[type="time"] {
-    min-width: 120px;
+.submit-btn {
+    background: linear-gradient(135deg, var(--rich-purple), var(--bright-purple));
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.cancel-btn:hover {
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.submit-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(155, 47, 147, 0.2);
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.submit-btn:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
 }

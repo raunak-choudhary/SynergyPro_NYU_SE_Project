@@ -1,0 +1,222 @@
+/* analytics.css */
+
+:root {
+    --black: #000000;
+    --dark-navy: #14141f;
+    --deep-purple: #2B1B50;
+    --rich-purple: #4B1B7F;
+    --bright-purple: #9B2F93;
+    --pink: #FF6B97;
+    --text-primary: #FFFFFF;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+    --border-color: rgba(255, 255, 255, 0.1);
+    --card-bg: rgba(26, 26, 46, 0.7);
+    --card-bg-hover: rgba(43, 27, 80, 0.7);
+}
+
+/* Dashboard Container */
+.dashboard-container {
+    display: flex;
+    min-height: 100vh;
+    background: var(--dark-navy);
+}
+
+/* Main Content Area */
+.main-content {
+    flex: 1;
+    padding: 20px;
+    background: var(--dark-navy);
+    margin-left: 240px;
+}
+
+/* Analytics Container */
+.analytics-container {
+    padding: 20px;
+    background: var(--dark-navy);
+}
+
+/* Main Section Styling */
+.analytics-section {
+    margin-bottom: 4rem;
+    background: var(--card-bg);
+    border-radius: 16px;
+    padding: 2.5rem;
+    border: 1px solid var(--border-color);
+}
+
+/* Section Headers */
+.section-header {
+    margin-bottom: 3rem;
+    text-align: center;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 1.2rem;
+    padding-bottom: 1.2rem;
+    position: relative;
+}
+
+.section-header h2::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    width: 180px;
+    height: 4px;
+    background: linear-gradient(to right, var(--rich-purple), var(--bright-purple));
+    border-radius: 4px;
+}
+
+/* Analytics Grid */
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+/* Analytics Cards */
+.analytics-card {
+    background: rgba(26, 26, 46, 0.7);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    animation: fadeIn 0.5s ease-out forwards;
+}
+
+.analytics-card:hover {
+    transform: translateY(-3px);
+    background: var(--card-bg-hover);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* Card Headers */
+.analytics-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    position: relative;
+}
+
+.analytics-card h3::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 120px;
+    height: 3px;
+    background: linear-gradient(to right, var(--rich-purple), var(--bright-purple));
+    border-radius: 3px;
+}
+
+/* Chart Container */
+.chart-container {
+    position: relative;
+    height: 300px;
+    width: 100%;
+    margin-top: 1.5rem;
+    background: rgba(255, 255, 255, 0.02);
+    border-radius: 8px;
+    padding: 1rem;
+}
+
+/* Chart Legends */
+.chart-legend {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    font-size: 0.9rem;
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 20px;
+}
+
+.legend-color {
+    width: 12px;
+    height: 12px;
+    border-radius: 3px;
+    margin-right: 8px;
+}
+
+/* Chart Tooltips */
+.chartjs-tooltip {
+    background: rgba(26, 26, 46, 0.95) !important;
+    backdrop-filter: blur(4px);
+    border: 1px solid var(--border-color) !important;
+    border-radius: 8px !important;
+    color: var(--text-primary) !important;
+    padding: 8px 12px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .analytics-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .section-header h2 {
+        font-size: 2rem;
+    }
+
+    .chart-container {
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .analytics-container {
+        padding: 1rem;
+    }
+
+    .analytics-section {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .section-header h2 {
+        font-size: 1.75rem;
+    }
+
+    .analytics-card {
+        padding: 1rem;
+    }
+
+    .chart-container {
+        height: 200px;
+        padding: 0.5rem;
+    }
+}
+
+/* Dark Theme Chart Customization */
+canvas {
+    filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+}

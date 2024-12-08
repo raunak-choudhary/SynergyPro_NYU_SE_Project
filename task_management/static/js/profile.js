@@ -33,15 +33,6 @@ class ProfileManager {
                 this.dropdownMenu?.classList.remove('show');
             }
         });
-    
-        // Verification Buttons
-        //if (this.verifyEmailBtn) {
-            //this.verifyEmailBtn.addEventListener('click', () => this.handleEmailVerification());
-        //}
-    
-        //if (this.verifyPhoneBtn) {
-            //this.verifyPhoneBtn.addEventListener('click', () => this.handlePhoneVerification());
-        //}
 
         //Profile Dropdown Call
         this.initializeProfileDropdown();
@@ -85,14 +76,6 @@ class ProfileManager {
             }
         }
     }
-
-    //handleEmailVerification() {
-        //this.showNotification('Email verification link sent!', 'success');
-    //}
-
-    //handlePhoneVerification() {
-        //this.showNotification('SMS verification code sent!', 'success');
-    //}
 
     handleOutsideClick(event) {
         if (this.photoOptionsModal && 

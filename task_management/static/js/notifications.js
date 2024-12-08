@@ -1,10 +1,10 @@
-// CREATE NEW FILE: static/js/notifications.js
 class NotificationManager {
     constructor() {
         this.initializeElements();
-        this.initializeNotifications();
+        this.fetchNotificationsFromServer();
         this.attachEventListeners();
-        this.updateNotificationBadge();
+        // Poll for new notifications every minute
+        setInterval(() => this.fetchNotificationsFromServer(), 60000);
     }
 
     initializeElements() {
@@ -13,44 +13,23 @@ class NotificationManager {
         this.notificationsList = document.querySelector('.notifications-list');
         this.markAllReadBtn = document.querySelector('.mark-all-read');
         this.notificationBadge = document.querySelector('.notification-badge');
+        this.clearAllBtn = document.querySelector('.clear-all');
     }
 
-    initializeNotifications() {
-        // Get notifications from localStorage first
-        const savedNotifications = localStorage.getItem('notifications');
-        
-        if (savedNotifications) {
-            // Use saved notifications if they exist
-            this.notifications = JSON.parse(savedNotifications);
-        } else {
-            // Only set default notifications if none exist in localStorage
-            this.notifications = [
-                {
-                    id: 1,
-                    message: 'Task deadline approaching',
-                    timestamp: new Date().toISOString(),
-                    read: false
-                },
-                {
-                    id: 2,
-                    message: 'New task assigned',
-                    timestamp: new Date().toISOString(),
-                    read: false
-                },
-                {
-                    id: 3,
-                    message: 'Progress update required',
-                    timestamp: new Date().toISOString(),
-                    read: false
-                }
-            ];
-            // Save these default notifications
-            this.saveNotifications();
+    async fetchNotificationsFromServer() {
+        try {
+            const response = await fetch('/api/notifications/');
+            if (response.ok) {
+                const notifications = await response.json();
+                this.renderNotifications(notifications);
+                this.updateNotificationBadge(notifications);
+            } else {
+                console.error('Failed to fetch notifications');
+            }
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
         }
-    
-        this.renderNotifications();
     }
-
 
     attachEventListeners() {
         if (this.notificationTrigger) {
@@ -62,6 +41,10 @@ class NotificationManager {
 
         if (this.markAllReadBtn) {
             this.markAllReadBtn.addEventListener('click', () => this.markAllAsRead());
+        }
+
+        if (this.clearAllBtn) {
+            this.clearAllBtn.addEventListener('click', () => this.clearAllNotifications());
         }
 
         // Close on outside click
@@ -82,11 +65,6 @@ class NotificationManager {
                 }
             });
         }
-
-        const clearAllBtn = document.querySelector('.clear-all');
-        if (clearAllBtn) {
-            clearAllBtn.addEventListener('click', () => this.clearAllNotifications());
-        }
     }
 
     toggleNotifications() {
@@ -95,51 +73,69 @@ class NotificationManager {
         }
     }
 
-    markAllAsRead() {
-        const unreadItems = document.querySelectorAll('.notification-item.unread');
-        unreadItems.forEach(item => {
-            item.classList.remove('unread');
-        });
-        
-        // Update badge
-        const badge = document.querySelector('.notification-badge');
-        if (badge) {
-            badge.textContent = '0';
-            badge.style.display = 'none';
-        }
+    async markAllAsRead() {
+        try {
+            const response = await fetch('/api/notifications/mark-all-read/', {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': this.getCsrfToken()
+                }
+            });
 
-        this.notifications.forEach(notification => {
-            notification.read = true;
-        });
-        this.saveNotifications();
-        this.renderNotifications();
-        this.updateNotificationBadge();
-    }
-
-    markAsRead(notificationId) {
-        const notification = this.notifications.find(n => n.id === notificationId);
-        if (notification) {
-            notification.read = true;
-            this.saveNotifications();
-            this.renderNotifications();
-            this.updateNotificationBadge();
-        }
-    }
-
-    saveNotifications() {
-        localStorage.setItem('notifications', JSON.stringify(this.notifications));
-    }
-
-    updateNotificationBadge() {
-        const unreadCount = this.notifications.filter(n => !n.read).length;
-        
-        if (this.notificationBadge) {
-            if (unreadCount > 0) {
-                this.notificationBadge.textContent = unreadCount;
-                this.notificationBadge.style.display = 'block';
-            } else {
-                this.notificationBadge.style.display = 'none';
+            if (response.ok) {
+                const unreadItems = document.querySelectorAll('.notification-item.unread');
+                unreadItems.forEach(item => {
+                    item.classList.remove('unread');
+                });
+                this.updateNotificationBadge([]);
             }
+        } catch (error) {
+            console.error('Error marking all as read:', error);
+        }
+    }
+
+    async markAsRead(notificationId) {
+        try {
+            const response = await fetch(`/api/notifications/mark-read/${notificationId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': this.getCsrfToken()
+                }
+            });
+
+            if (response.ok) {
+                const notificationItem = document.querySelector(`.notification-item[data-id="${notificationId}"]`);
+                if (notificationItem) {
+                    notificationItem.classList.remove('unread');
+                    await this.fetchNotificationsFromServer(); // Refresh notifications
+                }
+            }
+        } catch (error) {
+            console.error('Error marking notification as read:', error);
+        }
+    }
+
+    async clearAllNotifications() {
+        try {
+            const response = await fetch('/api/notifications/clear/', {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRFToken': this.getCsrfToken()
+                }
+            });
+
+            if (response.ok) {
+                if (this.notificationsList) {
+                    this.notificationsList.innerHTML = `
+                        <div class="notification-item empty-state">
+                            <p>No notifications</p>
+                        </div>
+                    `;
+                }
+                this.updateNotificationBadge([]);
+            }
+        } catch (error) {
+            console.error('Error clearing notifications:', error);
         }
     }
 
@@ -154,10 +150,10 @@ class NotificationManager {
         return `${Math.floor(seconds / 86400)} days ago`;
     }
 
-    renderNotifications() {
+    renderNotifications(notifications) {
         if (!this.notificationsList) return;
 
-        if (this.notifications.length === 0) {
+        if (notifications.length === 0) {
             this.notificationsList.innerHTML = `
                 <div class="notification-item empty-state">
                     <p>No notifications</p>
@@ -166,44 +162,61 @@ class NotificationManager {
             return;
         }
 
-        this.notificationsList.innerHTML = this.notifications
-        .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp))
-        .map(notification => `
-            <div class="notification-item ${notification.read ? '' : 'unread'}" data-id="${notification.id}">
-                <div class="notification-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M12 22c1-1 1-2 1-3h-2c0 1 0 2 1 3z"/>
-                        <path d="M19 17V11a7 7 0 0 0-14 0v6l-2 2h18l-2-2z"/>
-                    </svg>
+        this.notificationsList.innerHTML = notifications
+            .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+            .map(notification => `
+                <div class="notification-item ${notification.read ? '' : 'unread'}" data-id="${notification.id}">
+                    <div class="notification-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 22c1-1 1-2 1-3h-2c0 1 0 2 1 3z"/>
+                            <path d="M19 17V11a7 7 0 0 0-14 0v6l-2 2h18l-2-2z"/>
+                        </svg>
+                    </div>
+                    <div class="notification-content">
+                        <p class="notification-message">${notification.message}</p>
+                        <span class="notification-time">${this.formatTimeAgo(notification.created_at)}</span>
+                    </div>
                 </div>
-                <div class="notification-content">
-                    <p class="notification-message">${notification.message}</p>
-                    <span class="notification-time">${this.formatTimeAgo(notification.timestamp)}</span>
-                </div>
-            </div>
-        `).join('');
-        
-
-    }
-    addNotification(message) {
-        const notification = {
-            id: Date.now(),
-            message,
-            timestamp: new Date().toISOString(),
-            read: false
-        };
-        
-        this.notifications.unshift(notification);
-        this.saveNotifications();
-        this.renderNotifications();
-        this.updateNotificationBadge();
+            `).join('');
     }
 
-    clearAllNotifications() {
-        this.notifications = [];
-        this.saveNotifications();
-        this.renderNotifications();
-        this.updateNotificationBadge();
+    updateNotificationBadge(notifications) {
+        if (!this.notificationBadge) return;
+        
+        const unreadCount = notifications.filter(n => !n.read).length;
+        if (unreadCount > 0) {
+            this.notificationBadge.textContent = unreadCount;
+            this.notificationBadge.style.display = 'block';
+        } else {
+            this.notificationBadge.style.display = 'none';
+        }
+    }
+
+    getCsrfToken() {
+        return document.querySelector('[name=csrfmiddlewaretoken]')?.value;
+    }
+
+    // Method to be called from other parts of the application
+    async addNotification(message, taskId = null) {
+        try {
+            const response = await fetch('/api/notifications/create/', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': this.getCsrfToken()
+                },
+                body: JSON.stringify({
+                    message,
+                    task_id: taskId
+                })
+            });
+
+            if (response.ok) {
+                await this.fetchNotificationsFromServer();
+            }
+        } catch (error) {
+            console.error('Error adding notification:', error);
+        }
     }
 }
 

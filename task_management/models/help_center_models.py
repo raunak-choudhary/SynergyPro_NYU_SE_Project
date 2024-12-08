@@ -34,3 +34,16 @@ class DailyArticleSelection(models.Model):
     
     def __str__(self):
         return f"{self.profile_type} - {self.title} ({self.date})"
+    
+class DailyKeywordSelection(models.Model):
+    """Stores daily selected keywords for each profile type"""
+    profile_type = models.CharField(max_length=20)
+    keyword = models.CharField(max_length=50)
+    selection_date = models.DateField(default=date.today)
+    
+    class Meta:
+        verbose_name_plural = "Daily Keyword Selections"
+        ordering = ['selection_date', 'profile_type']
+    
+    def __str__(self):
+        return f"{self.profile_type} - {self.keyword} ({self.selection_date})"

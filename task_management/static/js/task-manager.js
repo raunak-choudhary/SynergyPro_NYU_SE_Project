@@ -160,7 +160,7 @@ class TaskManager {
         if (inProgressTasks.length === 0) return;
     
         // Calculate average progress
-        const totalProgress = inProgressTasks.reduce((sum, task) => sum + (task.progress || 0), 0);
+        const totalProgress = inProgressTasks.reduce((sum, task) => sum + (task.task_progress), 0);
         const averageProgress = totalProgress / inProgressTasks.length;
     
         // Select emoji based on progress
@@ -309,20 +309,20 @@ class TaskManager {
     }
 
     createTaskCard(task) {
+        console.log('Creating task card for:', task);
+        
         const taskCard = document.createElement('div');
         taskCard.className = 'task-card';
         taskCard.dataset.taskId = task.id;
     
-        const categoryHTML = task.category ? this.generateCategoryHTML(task.category) : '';
-    
-        // Get user data from the profile dropdown in header
-        const profileDropdown = document.getElementById('profileDropdown');
-        const headerAvatar = profileDropdown.querySelector('.avatar-img');
-        const avatarSrc = headerAvatar.src; // This will get the already processed image URL
-    
-        taskCard.innerHTML = `
-            <div class="task-header">
-                <h3 class="task-title">${task.title}</h3>
+        // Add a unique identifier to the JS-generated template
+        const template = `
+            <div class="task-header" data-source="js-template">
+                <div class="title-section">
+                    <h4 class="task-title">${task.title}</h4>
+                    <span class="priority-label">${task.priority} •</span>
+                    <span class="category-label">${task.category ? task.category.name : 'No Category'}</span>
+                </div>
                 <div class="menu-container">
                     <button class="menu-dots">⋮</button>
                     <div class="menu-dropdown">
@@ -336,26 +336,52 @@ class TaskManager {
                 <div class="task-progress-section">
                     <div class="progress-header">
                         <span class="progress-label">Progress</span>
-                        <span class="progress-text">${task.progress || 0}%</span>
+                        <span class="progress-text">${task.task_progress}%</span>
                     </div>
                     <div class="progress-bar">
-                        <div class="progress-fill" style="width: ${task.progress || 0}%"></div>
+                        <div class="progress-fill" style="width: ${task.task_progress}%"></div>
                     </div>
                 </div>
                 <div class="task-meta">
                     ${this.formatTaskDate(task.end_date, task.status)}
                     <div class="task-members">
-                        <img src="${avatarSrc}"
-                            alt="User" 
-                            class="member-avatar"
-                        />
+                        <img src="${this.getCurrentUserAvatar()}" alt="User" class="member-avatar" />
                     </div>
                 </div>
             </div>
         `;
+        
+        // Log the generated HTML before insertion
+        console.log('Generated template:', template);
+        
+        taskCard.innerHTML = template;
+
+        taskCard.addEventListener('click', () => {
+            window.location.href = `/task/${task.id}/`;
+        });
     
-        this.attachTaskCardListeners(taskCard, task.id);
+        // After insertion, verify the DOM structure
+        console.log('Actual DOM structure:', taskCard.innerHTML);
+        
+        // Log computed styles
+        const titleSection = taskCard.querySelector('.title-section');
+        if (titleSection) {
+            const computedStyle = window.getComputedStyle(titleSection);
+            console.log('Title section computed styles:', {
+                display: computedStyle.display,
+                flexDirection: computedStyle.flexDirection,
+                gap: computedStyle.gap,
+                marginBottom: computedStyle.marginBottom
+            });
+        }
+    
         return taskCard;
+    }
+
+    getCurrentUserAvatar() {
+        const profileDropdown = document.getElementById('profileDropdown');
+        const headerAvatar = profileDropdown?.querySelector('.avatar-img');
+        return headerAvatar ? headerAvatar.src : '';
     }
 
     attachTaskCardListeners(taskCard, taskId) {
@@ -462,15 +488,6 @@ class TaskManager {
             </div>`;
     }
 
-    generateCategoryHTML(category) {
-        const colors = this.generatePastelColor(category.name);
-        return `
-            <div class="category-tag" style="background-color: ${colors.background}; color: ${colors.text}">
-                ${category.name}
-            </div>
-        `;
-    }
-
     generatePastelColor(str) {
         let hash = 0;
         for (let i = 0; i < str.length; i++) {
@@ -539,3 +556,4 @@ class TaskManager {
 document.addEventListener('DOMContentLoaded', () => {
     window.taskManager = new TaskManager();
 });
+

@@ -31,6 +31,7 @@ pylint-plugin-utils==0.8.2
 pyotp==2.9.0
 PySocks==1.7.1
 python-dotenv==1.0.0
+pytz==2024.2
 requests==2.32.3
 selenium==4.26.1
 setuptools==75.4.0

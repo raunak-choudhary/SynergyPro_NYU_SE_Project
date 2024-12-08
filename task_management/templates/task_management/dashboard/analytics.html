@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analytics Dashboard - SynergyPro</title>
+    <link rel="icon" href="{% static 'images/logo_title.png' %}" type="image/png">
+    <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
+    <link rel="stylesheet" href="{% static 'css/analytics.css' %}">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <img src="{% static 'images/logo.png' %}" alt="SynergyPro" class="logo">
+                <span class="logo-text">SynergyPro</span>
+            </div>
+
+            <div class="nav-section">
+                <span class="section-title">MAIN</span>
+                <a href="{% url 'individual_student_dashboard' %}" class="nav-item">
+                    <span class="nav-icon">📊</span>Overview
+                </a>
+                <a href="{% url 'tasks' %}" class="nav-item">
+                    <span class="nav-icon">📝</span>Tasks
+                </a>
+                <a href="{% url 'calendar' %}" class="nav-item">
+                    <span class="nav-icon">📅</span>Calendar
+                </a>
+                <a href="{% url 'settings' %}" class="nav-item">
+                    <span class="nav-icon">⚙️</span>Settings
+                </a>
+            </div>
+
+            <div class="nav-section">
+                <span class="section-title">TOOLS</span>
+                <a href="{% url 'analytics' %}" class="nav-item active">
+                    <span class="nav-icon">📈</span>
+                    Analytics
+                </a>
+            </div>
+
+            <!-- Help Center Box -->
+            <div class="help-center-box">
+                <div class="help-card">
+                    <div class="help-icon">?</div>
+                    <h4>Help Center</h4>
+                    <p>Having trouble in learning? Please contact us for more questions.</p>
+                    <button class="help-btn" id="helpCenterButton" onclick="window.location.href='{% url 'help_center' %}'">Go To Help Center</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="dashboard-header">
+                <div class="welcome-message">
+                    <h1>Analytics Dashboard</h1>
+                    <p>{{ user.first_name }}, here's your productivity insights!</p>
+                </div>
+
+                <div class="header-right">
+                    <!-- Notifications Panel-->
+                    <div class="notifications">
+                        <div class="notification-trigger" style="padding: 8px; justify-content: center; align-items: center; display: flex;">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+                            </svg>
+                            <span class="notification-badge" style="top: -5px; right: -5px;">1</span>
+                        </div>
+                        
+                        <div class="notifications-panel">
+                            <div class="notifications-header">
+                                <h3>Notifications</h3>
+                                <button class="mark-all-read">Mark all as read</button>
+                                <button class="clear-all">Clear All</button>
+                            </div>
+                            
+                            <div class="notifications-list">
+                                <div class="notification-item unread">
+                                    <div class="notification-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                            <path d="M12 22c1-1 1-2 1-3h-2c0 1 0 2 1 3z"></path>
+                                            <path d="M19 17V11a7 7 0 0 0-14 0v6l-2 2h18l-2-2z"></path>
+                                        </svg>
+                                    </div>
+                                    <div class="notification-content">
+                                        <p class="notification-message">Task deadline approaching</p>
+                                        <span class="notification-time">Just now</span>
+                                    </div>
+                                </div>
+                                <!-- Add more notification items as needed -->
+                            </div>
+                        </div>
+                    </div>
+                    <div id="profileDropdown" class="user-profile" 
+                        data-email-verified="{{ email_verified|lower }}" 
+                        data-mobile-verified="{{ mobile_verified|lower }}">
+                        <div class="avatar-wrapper">
+                            {% if user.profile_image %}
+                                <img src="{{ user.profile_image.url }}" class="avatar-img" alt="Profile Image">
+                            {% else %}
+                                <img src="https://ui-avatars.com/api/?name={{ user.first_name }}+{{ user.last_name }}&background=4B1B7F&color=fff" class="avatar-img" alt="Profile Image">
+                            {% endif %}
+                            <div class="verification-ring"></div>
+                            <div class="verification-warning" style="display: none;">!</div>
+                        </div>
+                        
+                        <div class="profile-dropdown-menu">
+                            <a href="{% url 'profile' %}" class="dropdown-item"><span class="icon">👤</span> Profile</a>
+                            <a href="{% url 'logout' %}" class="dropdown-item"><span class="icon">🚪</span> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+             <!-- Analytics Content -->
+             <main class="analytics-container">
+                <!-- Task Analytics Section -->
+                <section class="analytics-section">
+                    <div class="section-header">
+                        <h2>Task Analytics</h2>
+                    </div>
+                    
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h3>Completion Rate</h3>
+                            <div class="chart-container">
+                                <canvas id="completionRateChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="analytics-card">
+                            <h3>Priority Distribution</h3>
+                            <div class="chart-container">
+                                <canvas id="priorityChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="analytics-card">
+                            <h3>Status Distribution</h3>
+                            <div class="chart-container">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="analytics-card">
+                            <h3>Overdue Analysis</h3>
+                            <div class="chart-container">
+                                <canvas id="overdueChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Productivity Metrics Section -->
+                <section class="analytics-section">
+                    <div class="section-header">
+                        <h2>Productivity Metrics</h2>
+                    </div>
+
+                    <div class="analytics-grid">
+                        <div class="analytics-card">
+                            <h3>Peak Performance Times</h3>
+                            <div class="chart-container">
+                                <canvas id="peakPerformanceChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="analytics-card">
+                            <h3>Task Categories</h3>
+                            <div class="chart-container">
+                                <canvas id="categoryChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="analytics-card">
+                            <h3>File Activity</h3>
+                            <div class="chart-container">
+                                <canvas id="fileActivityChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="analytics-card">
+                            <h3>Task Load</h3>
+                            <div class="chart-container">
+                                <canvas id="taskLoadChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="{% static 'js/notifications.js' %}"></script>
+    <script src="{% static 'js/dashboard.js' %}"></script>
+    <script src="{% static 'js/analytics-manager.js' %}"></script>
+    {% csrf_token %}
+</body>
+</html>

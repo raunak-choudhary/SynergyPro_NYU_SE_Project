@@ -6,7 +6,7 @@ import random
 import json
 from .date_formatter import DateFormatter
 from .article_summaries import ArticleSummaryGenerator
-from ..models.help_center_models import ProfileKeywords, DailyArticleSelection
+from ..models.help_center_models import ProfileKeywords, DailyArticleSelection, DailyKeywordSelection
 
 class NewsService:
     def __init__(self):
@@ -15,19 +15,39 @@ class NewsService:
         self.summary_generator = ArticleSummaryGenerator()
 
     def get_daily_keywords(self, profile_type):
-        """Get or set cached daily keywords"""
-        cache_key = f'daily_keywords_{profile_type}_{datetime.now().date()}'
+        """Get or set daily keywords with database storage"""
+        today = datetime.now().date()
+        cache_key = f'daily_keywords_{profile_type}_{today}'
         
+        # Try to get from cache first
         cached_keywords = cache.get(cache_key)
         if cached_keywords:
             return json.loads(cached_keywords)
             
+        # Get all available keywords
         all_keywords = list(ProfileKeywords.objects.filter(
             profile_type=profile_type
         ).values_list('keyword', flat=True))
         
-        daily_keywords = random.sample(all_keywords, 10)
+        if not all_keywords:
+            print(f"No keywords found for profile type: {profile_type}")
+            return []
+
+        # Select 10 random keywords
+        num_keywords = min(10, len(all_keywords))
+        daily_keywords = random.sample(all_keywords, num_keywords)
+        
+        # Store in cache
         cache.set(cache_key, json.dumps(daily_keywords), 86400)
+        
+        # Clear previous selections and store new ones
+        DailyKeywordSelection.objects.filter(profile_type=profile_type).delete()
+        for keyword in daily_keywords:
+            DailyKeywordSelection.objects.create(
+                profile_type=profile_type,
+                keyword=keyword,
+                selection_date=today
+            )
         
         return daily_keywords
 
