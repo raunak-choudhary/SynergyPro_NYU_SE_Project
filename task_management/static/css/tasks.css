@@ -580,3 +580,108 @@
         margin-left: 0;
     }
 }
+
+/* Task Filters Container */
+.task-filters {
+    display: flex;
+    gap: 12px;
+    margin-left: auto;
+    margin-right: 16px;
+}
+
+/* Custom Select Dropdown */
+.filter-dropdown {
+    position: relative;
+    padding: 8px 14px;
+    min-width: 140px;
+    background: rgba(43, 27, 80, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 8px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    backdrop-filter: blur(12px);
+}
+
+/* Dropdown Options Styling */
+.filter-dropdown option {
+    background: rgba(43, 27, 80, 0.98) !important;
+    color: rgba(255, 255, 255, 0.9);
+    padding: 12px;
+    font-weight: 500;
+    border: none;
+}
+
+/* Custom Select Arrow */
+.filter-dropdown {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='rgba(255, 255, 255, 0.6)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    background-size: 14px;
+    padding-right: 32px;
+}
+
+/* Hover and Focus States */
+.filter-dropdown:hover {
+    background: rgba(75, 27, 127, 0.95);
+    border-color: rgba(255, 107, 151, 0.4);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.filter-dropdown:focus {
+    outline: none;
+    background: rgba(75, 27, 127, 0.98);
+    border-color: rgba(255, 107, 151, 0.6);
+    box-shadow: 0 0 0 3px rgba(255, 107, 151, 0.2);
+}
+
+/* Firefox-specific styles */
+@-moz-document url-prefix() {
+    .filter-dropdown {
+        background-color: rgba(43, 27, 80, 0.95);
+        color: rgba(255, 255, 255, 0.9);
+    }
+
+    .filter-dropdown option {
+        background-color: rgba(43, 27, 80, 0.98);
+        color: rgba(255, 255, 255, 0.9);
+    }
+}
+
+/* Webkit browsers (Chrome, Safari) specific styles */
+.filter-dropdown::-webkit-scrollbar {
+    width: 8px;
+}
+
+.filter-dropdown::-webkit-scrollbar-track {
+    background: rgba(43, 27, 80, 0.95);
+    border-radius: 4px;
+}
+
+.filter-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(255, 107, 151, 0.4);
+    border-radius: 4px;
+}
+
+.filter-dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 107, 151, 0.6);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .task-filters {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 8px;
+        margin-right: 12px;
+    }
+
+    .filter-dropdown {
+        width: 100%;
+    }
+}

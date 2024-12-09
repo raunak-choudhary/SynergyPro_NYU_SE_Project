@@ -56,6 +56,19 @@
                 </div>
 
                 <div class="header-right">
+
+                     <div class="task-filters">
+                        <select id="statusFilter" class="filter-dropdown">
+                            <option value="">All Statuses</option>
+                            <option value="yet_to_start">Yet to Start</option>
+                            <option value="in_progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                        </select>
+                        <select id="categoryFilter" class="filter-dropdown">
+                            <option value="">All Categories</option>
+                            <!-- Categories will be populated dynamically -->
+                        </select>
+                    </div>
                     <!-- Notifications Panel-->
                     <div class="notifications">
                         <div class="notification-trigger" style="padding: 8px; justify-content: center; align-items: center; display: flex;">
