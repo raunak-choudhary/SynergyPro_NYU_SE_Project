@@ -158,8 +158,20 @@ class TaskManager {
 
     updateEmotionBar() {
         const inProgressTasks = this.taskGroups.inProgress;
-        if (inProgressTasks.length === 0) return;
-    
+        const emotionBarContainer = document.querySelector('.emotion-bar-container');
+
+        if (!inProgressTasks || inProgressTasks.length === 0) {
+            if (emotionBarContainer) {
+                emotionBarContainer.style.display = 'none';
+            }
+            return;
+        }
+
+        // Show the container if there are tasks
+        if (emotionBarContainer) {
+            emotionBarContainer.style.display = 'block';
+        }
+
         // Calculate average progress
         const totalProgress = inProgressTasks.reduce((sum, task) => sum + (task.task_progress), 0);
         const averageProgress = totalProgress / inProgressTasks.length;
