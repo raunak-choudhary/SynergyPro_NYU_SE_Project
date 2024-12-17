@@ -110,6 +110,13 @@ def signup_view(request):
                     'status': 'error',
                     'message': 'Email already exists'
                 }, status=400)
+            
+            if data.get('userType') == 'team' and data.get('teamName'):
+                if CustomUser.objects.filter(team_name=data.get('teamName')).exists():
+                    return JsonResponse({
+                        'status': 'error',
+                        'message': 'Team name already exists'
+                    }, status=400)
                 
             # Create user with all fields
             user = CustomUser.objects.create_user(
@@ -120,7 +127,8 @@ def signup_view(request):
                 last_name=data.get('lastName', ''),
                 phone=data.get('phone', ''),
                 user_type=data.get('userType', ''),
-                profile_type=data.get('profileType', '')
+                profile_type=data.get('profileType', ''),
+                team_name=data.get('teamName') if data.get('userType') == 'team' else None
             )
             
             # Handle conditional fields
@@ -131,16 +139,13 @@ def signup_view(request):
                 user.organization_website = data.get('organizationWebsite', 'N/A')
             
             user.save()
-            
-            # Log the user in after signup
+
             login(request, user)
-            dashboard_url = get_dashboard_url(user)
             
             return JsonResponse({
                 'status': 'success',
                 'message': 'Account created successfully',
                 'username': user.username,
-                'redirect_url': dashboard_url
             })
             
         except Exception as e:

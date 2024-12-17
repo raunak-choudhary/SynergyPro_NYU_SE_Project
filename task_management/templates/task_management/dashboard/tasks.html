@@ -21,9 +21,31 @@
 
             <div class="nav-section">
                 <span class="section-title">MAIN</span>
-                <a href="{% url 'individual_student_dashboard' %}" class="nav-item">
-                    <span class="nav-icon">📊</span>Overview
+                <a href="#" 
+                    class="nav-item" 
+                    data-user-type="{{ user.user_type }}" 
+                    data-profile-type="{{ user.profile_type }}"
+                    onclick="return handleOverviewClick(this);">
+                    <span class="nav-icon">📊</span>
+                    Overview
                 </a>
+                
+                <script>
+                function handleOverviewClick(element) {
+                    const userType = element.getAttribute('data-user-type');
+                    const profileType = element.getAttribute('data-profile-type');
+                    
+                    if (userType === 'individual') {
+                        if (profileType === 'student') {
+                            window.location.href = "{% url 'individual_student_dashboard' %}";
+                        } else if (profileType === 'freelancer') {
+                            window.location.href = "{% url 'individual_freelancer_dashboard' %}";
+                        }
+                    }
+                    return false;
+                }
+                </script>
+
                 <a href="{% url 'tasks' %}" class="nav-item active">
                     <span class="nav-icon">📝</span>Tasks
                 </a>

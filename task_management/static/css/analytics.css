@@ -1,38 +1,10 @@
 /* analytics.css */
 
-:root {
-    --black: #000000;
-    --dark-navy: #14141f;
-    --deep-purple: #2B1B50;
-    --rich-purple: #4B1B7F;
-    --bright-purple: #9B2F93;
-    --pink: #FF6B97;
-    --text-primary: #FFFFFF;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --border-color: rgba(255, 255, 255, 0.1);
-    --card-bg: rgba(26, 26, 46, 0.7);
-    --card-bg-hover: rgba(43, 27, 80, 0.7);
-}
-
-/* Dashboard Container */
-.dashboard-container {
-    display: flex;
-    min-height: 100vh;
-    background: var(--dark-navy);
-}
-
-/* Main Content Area */
-.main-content {
-    flex: 1;
-    padding: 20px;
-    background: var(--dark-navy);
-    margin-left: 240px;
-}
+/* Only keeping analytics-specific styles and removing duplicates from dashboard.css */
 
 /* Analytics Container */
 .analytics-container {
-    padding: 20px;
-    background: var(--dark-navy);
+    padding: 32px;
 }
 
 /* Main Section Styling */
@@ -45,12 +17,12 @@
 }
 
 /* Section Headers */
-.section-header {
+.analytics-section .section-header {
     margin-bottom: 3rem;
     text-align: center;
 }
 
-.section-header h2 {
+.analytics-section .section-header h2 {
     font-size: 2.5rem;
     font-weight: 700;
     color: var(--text-primary);
@@ -59,7 +31,7 @@
     position: relative;
 }
 
-.section-header h2::after {
+.analytics-section .section-header h2::after {
     content: '';
     position: absolute;
     left: 50%;
@@ -81,7 +53,7 @@
 
 /* Analytics Cards */
 .analytics-card {
-    background: rgba(26, 26, 46, 0.7);
+    background: var(--card-bg);
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem;
@@ -92,7 +64,7 @@
 .analytics-card:hover {
     transform: translateY(-3px);
     background: var(--card-bg-hover);
-    border-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(0, 0, 0, 0.2);
 }
 
 /* Card Headers */
@@ -122,7 +94,7 @@
     height: 300px;
     width: 100%;
     margin-top: 1.5rem;
-    background: rgba(255, 255, 255, 0.02);
+    background: rgba(0, 0, 0, 0.02);
     border-radius: 8px;
     padding: 1rem;
 }
@@ -142,7 +114,7 @@
     font-size: 0.9rem;
     color: var(--text-secondary);
     padding: 0.5rem 1rem;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 20px;
 }
 
@@ -155,7 +127,7 @@
 
 /* Chart Tooltips */
 .chartjs-tooltip {
-    background: rgba(26, 26, 46, 0.95) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
     backdrop-filter: blur(4px);
     border: 1px solid var(--border-color) !important;
     border-radius: 8px !important;
@@ -183,7 +155,7 @@
         gap: 1.5rem;
     }
 
-    .section-header h2 {
+    .analytics-section .section-header h2 {
         font-size: 2rem;
     }
 
@@ -202,7 +174,7 @@
         margin-bottom: 2rem;
     }
 
-    .section-header h2 {
+    .analytics-section .section-header h2 {
         font-size: 1.75rem;
     }
 
@@ -216,7 +188,7 @@
     }
 }
 
-/* Dark Theme Chart Customization */
-canvas {
+/* Chart Customization */
+.analytics-section canvas {
     filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
 }

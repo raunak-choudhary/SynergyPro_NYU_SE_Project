@@ -148,7 +148,7 @@
 
 .save-btn {
     background: linear-gradient(135deg, var(--rich-purple), var(--bright-purple));
-    color: var(--text-primary);
+    color: white;
     border: none;
     padding: 0.75rem 2rem;
     border-radius: 8px;
@@ -185,14 +185,14 @@
 }
 
 .modal-content {
-    background: linear-gradient(145deg, #2a1042, #3a1759);
+    background: linear-gradient(145deg, #f0f0f0, #e0e0e0);
     margin: 15% auto;
     padding: 25px;
     border-radius: 16px;
     width: 90%;
     max-width: 500px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    color: white;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+    color: var(--text-primary);
     pointer-events: auto;
     z-index: 1001;
     transition: opacity 0.5s ease-out;
@@ -203,7 +203,7 @@ body.modal-open {
 }
 
 .modal h2 {
-    color: #fff;
+    color: var(--text-primary);
     margin-bottom: 20px;
     font-size: 24px;
     text-align: center;
@@ -238,7 +238,7 @@ body.modal-open {
     flex-direction: column;
     align-items: center;
     padding: 25px;
-    border: 2px dashed rgba(255, 255, 255, 0.3);
+    border: 2px dashed rgba(0, 0, 0, 0.1);
     border-radius: 12px;
     cursor: pointer;
     transition: all 0.3s ease;
@@ -249,7 +249,7 @@ body.modal-open {
 
 .upload-option:hover {
     background: rgba(255, 255, 255, 0.2);
-    border-color: rgba(255, 255, 255, 0.5);
+    border-color: rgba(0, 0, 0, 0.2);
     transform: translateY(-2px);
 }
 
@@ -257,12 +257,12 @@ body.modal-open {
     width: 40px;
     height: 40px;
     margin-bottom: 12px;
-    color: #fff;
+    color: var(--text-primary);
 }
 
 .upload-option span {
     display: block;
-    color: #fff;
+    color: var(--text-primary);
     font-size: 16px;
     margin-top: 8px;
 }
@@ -375,7 +375,7 @@ body.modal-open {
 }
 
 .dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 /* Notification Panel Styles */
@@ -414,7 +414,7 @@ body.modal-open {
 }
 
 .notification-trigger:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 /* Toast Notification */
@@ -474,7 +474,7 @@ body.modal-open {
 }
 
 .otp-modal h2 {
-    color: #fff;
+    color: var(--text-primary);
     margin-bottom: 20px;
     font-size: 24px;
     text-align: center;
@@ -484,7 +484,7 @@ body.modal-open {
 }
 
 .otp-subtitle {
-    color: #ffffff;
+    color: var(--text-secondary);
     margin: 15px 0 25px;
     font-size: 0.95rem;
     opacity: 0.9;
@@ -500,10 +500,10 @@ body.modal-open {
 .otp-input {
     width: 45px;
     height: 45px;
-    border: 2px solid rgba(255, 255, 255, 0.3);
+    border: 2px solid rgba(0, 0, 0, 0.1);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.1);
-    color: white;
+    background: rgba(255, 255, 255, 0.9);
+    color: var(--text-primary);
     font-size: 1.5rem;
     text-align: center;
     transition: all 0.3s ease;
@@ -511,7 +511,7 @@ body.modal-open {
 
 .otp-input:focus {
     border-color: var(--bright-purple);
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 1);
     outline: none;
     transform: translateY(-2px);
 }
@@ -539,7 +539,7 @@ body.modal-open {
 .resend-otp-btn {
     background: none;
     border: none;
-    color: #FF69B4;
+    color: var(--bright-purple);
     font-size: 0.9rem;
     cursor: pointer;
     padding: 5px 10px;
@@ -551,7 +551,7 @@ body.modal-open {
 }
 
 .resend-otp-btn:hover {
-    color: #FF1493;
+    color: var(--rich-purple);
     text-decoration: underline;
 }
 
@@ -581,13 +581,13 @@ body.modal-open {
 
 .timer-background {
     fill: none;
-    stroke: rgba(255, 255, 255, 0.1);
+    stroke: rgba(0, 0, 0, 0.1);
     stroke-width: 8;
 }
 
 .timer-progress {
     fill: none;
-    stroke: #FF69B4;
+    stroke: var(--bright-purple);
     stroke-width: 8;
     stroke-linecap: round;
     stroke-dasharray: 283;
@@ -600,7 +600,7 @@ body.modal-open {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    color: white;
+    color: var(--text-primary);
     font-size: 1.2rem;
     font-weight: 600;
 }
@@ -692,15 +692,15 @@ input[data-verified="true"] {
     }
 }
 
-@media (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: light) {
     .input-with-button input {
-        background: rgba(255, 255, 255, 0.05);
-        border-color: rgba(255, 255, 255, 0.1);
-        color: white;
+        background: rgba(255, 255, 255, 0.9);
+        border-color: var(--border-color);
+        color: var(--text-primary);
     }
 
     .verification-status.success {
-        background: rgba(16, 185, 129, 0.2);
-        color: #34d399;
+        background: rgba(16, 185, 129, 0.1);
+        color: #10b981;
     }
 }

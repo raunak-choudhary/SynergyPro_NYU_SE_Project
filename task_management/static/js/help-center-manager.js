@@ -99,22 +99,22 @@ class HelpCenterManager {
         // Search in articles
         this.searchIndex.articles.forEach(item => {
             const matches = item.title.includes(query) || 
-                          item.description.includes(query) || 
-                          item.category.includes(query);
+                        item.description.includes(query) || 
+                        item.category.includes(query);
             item.element.style.display = matches ? 'block' : 'none';
         });
 
         // Search in learning paths
         this.searchIndex.learningPaths.forEach(item => {
             const matches = item.title.includes(query) || 
-                          item.description.includes(query);
+                        item.description.includes(query);
             item.element.style.display = matches ? 'block' : 'none';
         });
 
         // Search in tools
         this.searchIndex.tools.forEach(item => {
             const matches = item.title.includes(query) || 
-                          item.description.includes(query);
+                        item.description.includes(query);
             item.element.style.display = matches ? 'block' : 'none';
         });
 
@@ -132,8 +132,8 @@ class HelpCenterManager {
 
     initializeArticlePools() {
         console.log('Initializing article pools...');
-        this.articlePools = new Map();  // Ensure Map is initialized
-        this.currentPositions = new Map();  // Ensure Map is initialized
+        this.articlePools = new Map();
+        this.currentPositions = new Map();
         
         fetch('/api/help-center/get-article-pools/')
             .then(response => response.json())
@@ -339,20 +339,6 @@ class HelpCenterManager {
                 }
             }, 10);
         });
-    }
-
-    showNotification(message, type = 'success') {
-        const notification = document.createElement('div');
-        notification.className = `notification ${type}`;
-        notification.textContent = message;
-        document.body.appendChild(notification);
-
-        requestAnimationFrame(() => notification.classList.add('show'));
-
-        setTimeout(() => {
-            notification.classList.remove('show');
-            setTimeout(() => notification.remove(), 300);
-        }, 3000);
     }
 }
 

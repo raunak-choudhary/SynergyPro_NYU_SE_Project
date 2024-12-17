@@ -16,6 +16,9 @@ urlpatterns = [
         # Dashboard URLs
         path('dashboard/individual/student/', dashboard_views.individual_student_dashboard, name='individual_student_dashboard'),
         path('dashboard/individual/freelancer/', dashboard_views.individual_freelancer_dashboard, name='individual_freelancer_dashboard'),
+
+        #Dashboard API URLs
+        path('api/dashboard/stats/', dashboard_views.dashboard_stats_api, name='dashboard_stats'),
         
         # Profile path
         path('profile/', dashboard_views.profile_view, name='profile'),

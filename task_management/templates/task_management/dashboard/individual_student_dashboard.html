@@ -19,10 +19,32 @@
 
             <div class="nav-section">
                 <span class="section-title">MAIN</span>
-                <a href="{% url 'individual_student_dashboard' %}" class="nav-item active">
+
+                <a href="#" 
+                    class="nav-item" 
+                    data-user-type="{{ user.user_type }}" 
+                    data-profile-type="{{ user.profile_type }}"
+                    onclick="return handleOverviewClick(this);">
                     <span class="nav-icon">📊</span>
                     Overview
                 </a>
+
+                <script>
+                    function handleOverviewClick(element) {
+                        const userType = element.getAttribute('data-user-type');
+                        const profileType = element.getAttribute('data-profile-type');
+                        
+                        if (userType === 'individual') {
+                            if (profileType === 'student') {
+                                window.location.href = "{% url 'individual_student_dashboard' %}";
+                            } else if (profileType === 'freelancer') {
+                                window.location.href = "{% url 'individual_freelancer_dashboard' %}";
+                            }
+                        }
+                        return false;
+                    }
+                </script>
+                
                 <a href="{% url 'tasks' %}" class="nav-item">
                     <span class="nav-icon">📝</span>
                     Tasks
@@ -39,10 +61,6 @@
 
             <div class="nav-section">
                 <span class="section-title">TOOLS</span>
-                <a href="#" class="nav-item">
-                    <span class="nav-icon">⏲️</span>
-                    Focus Timer
-                </a>
                 <a href="{% url 'analytics' %}" class="nav-item">
                     <span class="nav-icon">📈</span>
                     Analytics
@@ -133,23 +151,20 @@
                             <span class="stat-title">Total Tasks</span>
                             <span class="stat-value">{{ total_tasks }}</span>
                         </div>
-                        <span class="stat-trend">↑ 12% from last week</span>
                     </div>
-
+                
                     <div class="stat-card">
                         <div class="stat-header">
                             <span class="stat-title">In Progress</span>
                             <span class="stat-value">{{ in_progress }}</span>
                         </div>
-                        <span class="stat-trend">Current Focus</span>
                     </div>
-
+                
                     <div class="stat-card">
                         <div class="stat-header">
                             <span class="stat-title">Completed</span>
                             <span class="stat-value">{{ completed }}</span>
                         </div>
-                        <span class="stat-trend">3 today</span>
                     </div>
                 </div>
 
@@ -170,43 +185,47 @@
                 <!-- Task Cards -->
                 <div class="task-cards">
                     <!-- Running Task -->
-                    <div class="task-card running">
+                    {% if first_task %}
+                    <div class="task-card running" onclick="window.location.href='{% url 'task_detail' first_task.id %}'">
                         <h3>Running Task</h3>
                         <div class="task-stats">
-                            <span class="task-number">65%</span>
+                            <div class="task-info">
+                                <h4>{{ first_task.title }}</h4>
+                                <span class="task-type">{{ first_task.category.name|default:"No Category" }}</span>
+                                <span class="priority-label {{ first_task.priority }}">{{ first_task.priority|title }}</span>
+                            </div>
                             <div class="progress-container">
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 65%"></div>
+                                    <div class="progress-fill" style="width: {{ first_task.task_progress }}%"></div>
                                 </div>
-                                <span class="total-tasks">100% Total</span>
+                                <span class="total-tasks">{{ first_task.task_progress }}% Complete</span>
                             </div>
                         </div>
                     </div>
+                    {% endif %}
 
                     <!-- Upcoming Task -->
-                    <div class="task-card upcoming">
+                    <div class="task-card upcoming" {% if second_task %}onclick="window.location.href='{% url 'tasks' %}'"{% endif %}>
                         <h3>Upcoming Task</h3>
+                        {% if second_task %}
                         <div class="task-stats">
                             <div class="task-info">
-                                <img src="https://placehold.co/100x60/2a2a40/FFFFFF/png?text=Mobile+App" 
-                                    alt="Mobile App Design Task" 
-                                    class="task-image"
-                                    style="border-radius: 8px; object-fit: cover;">
-                                <div class="task-details">
-                                    <h4>Creating Mobile App Design</h4>
-                                    <span class="task-type">UI/UX Design</span>
-                                </div>
+                                <h4>{{ second_task.title }}</h4>
+                                <span class="task-type">{{ second_task.category.name|default:"No Category" }}</span>
+                                <span class="priority-label {{ second_task.priority }}">{{ second_task.priority|title }}</span>
                             </div>
                             <div class="progress-container">
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%"></div>
+                                    <div class="progress-fill" style="width: {{ second_task.task_progress }}%"></div>
                                 </div>
-                                <div class="progress-info">
-                                    <span>Progress</span>
-                                    <span>0%</span>
-                                </div>
+                                <span class="total-tasks">{{ second_task.task_progress }}% Complete</span>
                             </div>
                         </div>
+                        {% else %}
+                        <div class="task-stats empty-state">
+                            <p>NO MORE TASKS IN PIPELINE !!</p>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>

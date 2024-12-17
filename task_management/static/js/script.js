@@ -247,7 +247,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function showSuccess(form, message) {
         const messageDiv = form.querySelector('.form-message') || 
-                          document.createElement('div');
+                        document.createElement('div');
         messageDiv.className = 'form-message success';
         messageDiv.textContent = message;
         if (!form.querySelector('.form-message')) {
@@ -302,6 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     ? 'individualProfileType' 
                     : 'teamProfileType'
                 ).value,
+                teamName: document.getElementById('userType').value === 'team' ? document.getElementById('teamName').value : null,
                 universityName: document.getElementById('universityName')?.value || 'N/A',
                 organizationName: document.getElementById('organizationName')?.value || 'N/A',
                 organizationWebsite: document.getElementById('organizationWebsite')?.value || 'N/A'
@@ -397,17 +398,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Profile type handling
     userTypeSelect.addEventListener('change', function() {
         resetFields();
+
+        const teamNameField = document.querySelector('.team-name-field');
         
         if (this.value === 'individual') {
             individualProfileDiv.style.display = 'block';
             teamProfileDiv.style.display = 'none';
+            teamNameField.style.display = 'none';
             document.getElementById('individualProfileType').required = true;
             document.getElementById('teamProfileType').required = false;
+            document.getElementById('teamName').required = false;
         } else if (this.value === 'team') {
             teamProfileDiv.style.display = 'block';
             individualProfileDiv.style.display = 'none';
+            teamNameField.style.display = 'block';
             document.getElementById('teamProfileType').required = true;
             document.getElementById('individualProfileType').required = false;
+            document.getElementById('teamName').required = true;
         }
     });
 
@@ -443,6 +450,7 @@ document.addEventListener('DOMContentLoaded', function() {
     function resetFields() {
         individualProfileDiv.style.display = 'none';
         teamProfileDiv.style.display = 'none';
+        document.querySelector('.team-name-field').style.display = 'none';
         individualProfileSelect.value = '';
         teamProfileSelect.value = '';
         resetAdditionalFields();
@@ -533,6 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize scroll events
     window.addEventListener('scroll', updateActiveNavLink);
     updateActiveNavLink();
+
 });
 
 // Section visibility animation

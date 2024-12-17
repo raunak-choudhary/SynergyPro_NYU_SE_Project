@@ -1,26 +1,26 @@
 /* Base Colors and Variables */
 :root {
     /* Main Gradient Colors */
-    --black: #000000;
-    --dark-navy: #1A1A2E;
-    --deep-purple: #2B1B50;
-    --rich-purple: #4B1B7F;
-    --bright-purple: #9B2F93;
-    --pink: #FF6B97;
+    --black: #1a1a2e;
+    --dark-navy: #f0f0f0;
+    --deep-purple: #e0e0e0;
+    --rich-purple: #5b2b8f;
+    --bright-purple: #ab3fa3;
+    --pink: #ff6b97;
 
     /* UI Colors */
-    --text-primary: #FFFFFF;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --text-muted: rgba(255, 255, 255, 0.5);
-    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #333333;
+    --text-secondary: rgba(0, 0, 0, 0.7);
+    --text-muted: rgba(0, 0, 0, 0.5);
+    --border-color: rgba(0, 0, 0, 0.1);
 
     /* Card Backgrounds */
-    --card-bg: rgba(26, 26, 46, 0.7);
-    --card-bg-hover: rgba(43, 27, 80, 0.7);
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --card-bg-hover: rgba(255, 255, 255, 0.9);
 
     /* Button Color */
     --button-primary: #5F2C99;
-    --button-hover: #2C2C4D;
+    --button-hover: #E0E0E0;
 }
 
 /* Section Containers */
@@ -61,9 +61,8 @@
     width: 180px;
     height: 4px;
     background: linear-gradient(to right,
-        var(--rich-purple),
-        var(--bright-purple)
-    );
+            var(--rich-purple),
+            var(--bright-purple));
     border-radius: 4px;
 }
 
@@ -87,9 +86,8 @@
     width: 120px;
     height: 3px;
     background: linear-gradient(to right,
-        var(--rich-purple),
-        var(--bright-purple)
-    );
+            var(--rich-purple),
+            var(--bright-purple));
     border-radius: 3px;
 }
 
@@ -134,7 +132,7 @@
 
 /* Progress Bar */
 .progress {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     height: 8px;
     border-radius: 4px;
     overflow: hidden;
@@ -319,11 +317,9 @@
     right: 0;
     bottom: 0;
     border-radius: 12px;
-    background: linear-gradient(
-        45deg,
-        transparent,
-        rgba(155, 47, 147, 0.05)
-    );
+    background: linear-gradient(45deg,
+            transparent,
+            rgba(155, 47, 147, 0.05));
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -381,7 +377,7 @@
     justify-content: center;
     pointer-events: auto;
     z-index: 4;
-    position: relative; 
+    position: relative;
 }
 
 .article-link:hover {
@@ -429,7 +425,7 @@
     border-top: 1px solid var(--border-color);
     padding-top: 1rem;
     position: relative;
-    z-index: 4; 
+    z-index: 4;
 }
 
 /* Tool Cards */
@@ -508,6 +504,7 @@
         transform: translateX(0);
         opacity: 1;
     }
+
     100% {
         transform: translateX(-100%);
         opacity: 0;
@@ -519,6 +516,7 @@
         transform: translateX(0);
         opacity: 1;
     }
+
     100% {
         transform: translateX(100%);
         opacity: 0;
@@ -530,6 +528,7 @@
         transform: translateX(100%);
         opacity: 0;
     }
+
     100% {
         transform: translateX(0);
         opacity: 1;
@@ -541,6 +540,7 @@
         transform: translateX(-100%);
         opacity: 0;
     }
+
     100% {
         transform: translateX(0);
         opacity: 1;

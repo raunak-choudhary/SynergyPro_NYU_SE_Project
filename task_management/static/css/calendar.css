@@ -1,7 +1,7 @@
 /* Calendar Container Styles */
 .calendar-container {
-    background: rgba(43, 27, 80, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem;
     margin: 2rem;
@@ -38,7 +38,7 @@
 }
 
 .calendar-navigation h2 {
-    color: white;
+    color: var(--text-primary);
     font-size: 1.25rem;
     margin: 0;
     min-width: 250px;
@@ -51,19 +51,19 @@
     padding: 8px;
     border-radius: 50%;
     transition: background-color 0.2s ease;
-    width: 32px; /* Explicitly set width */
-    height: 32px; /* Explicitly set height */
+    width: 32px;
+    height: 32px;
 }
 
 .calendar-navigation img:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .nav-btn {
     padding: 0.5rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
     border: none;
-    color: white;
+    color: var(--text-primary);
     width: 36px;
     height: 36px;
     border-radius: 50%;
@@ -75,7 +75,7 @@
 }
 
 .nav-btn:hover {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.1);
     transform: translateY(-1px);
 }
 
@@ -85,18 +85,19 @@
 }
 
 .nav-btn.prev-month:hover {
-    background: rgba(255, 0, 0, 0.6);
+    background: rgba(255, 0, 0, 0.1);
     transform: translateY(-1px);
 }
 
 .nav-btn.next-month:hover {
-    background: rgba(0, 255, 0, 0.6);
+    background: rgba(0, 255, 0, 0.1);
     transform: translateY(-1px);
 }
 
 /* View Selector Styles */
 .profile-dropdown-menu .dropdown-item.active {
     background: linear-gradient(135deg, var(--rich-purple), var(--bright-purple));
+    color: white;
 }
 
 #viewDropdown {
@@ -105,8 +106,8 @@
 }
 
 #viewDropdown .current-view {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
     border-radius: 20px;
     padding: 0.5rem 1rem;
     color: var(--text-primary);
@@ -120,8 +121,8 @@
 }
 
 #viewDropdown .current-view:hover {
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.25);
+    background: rgba(0, 0, 0, 0.08);
+    border-color: var(--border-color);
 }
 
 #viewDropdown .current-view svg {
@@ -174,7 +175,7 @@
 }
 
 #viewDropdown .dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 #viewDropdown .dropdown-item.active {
@@ -186,7 +187,7 @@
 .calendar-days-header {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.03);
     border-bottom: none;
     border-radius: 8px 8px 0 0;
 }
@@ -221,34 +222,35 @@
 .calendar-cell {
     min-height: 120px;
     padding: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-color);
+    background: var(--card-bg);
     transition: all 0.2s ease;
 }
 
 .calendar-cell:hover {
-    background: rgba(255, 255, 255, 0.08);
+    background: var(--card-bg-hover);
 }
 
 .calendar-cell.today {
-    background: rgba(107, 43, 137, 0.3);
-    border: 1px solid rgba(155, 47, 147, 0.3);
+    background: rgba(107, 43, 137, 0.1);
+    border: 1px solid rgba(155, 47, 147, 0.2);
 }
 
 .calendar-cell.today .date {
-    color: white;
+    color: var(--bright-purple);
     border-radius: 4px;
     display: inline-block;
-    background: linear-gradient(135deg, #9B2F93, #FF6B97);
+    background: linear-gradient(135deg, var(--rich-purple), var(--bright-purple));
+    color: white;
     font-weight: 600;
 }
 
 .calendar-cell.other-month {
-    background: rgba(0, 0, 0, 0.2);
+    background: rgba(0, 0, 0, 0.03);
 }
 
 .calendar-cell.other-month .date {
-    color: rgba(255, 255, 255, 0.4);
+    color: var(--text-secondary);
     opacity: 0.5;
 }
 
@@ -277,7 +279,7 @@
     grid-template-columns: 60px repeat(7, 1fr);
     border: 1px solid var(--border-color);
     border-radius: 0 0 8px 8px;
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--card-bg);
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
 }
 
@@ -303,7 +305,7 @@
 
 .day-column {
     border-right: 1px solid var(--border-color);
-    background: rgba(255, 255, 255, 0.02);
+    background: var(--card-bg);
     grid-template-rows: 60px repeat(24, minmax(60px, auto));
     position: relative;
     height: fit-content;
@@ -366,14 +368,14 @@
 
 .hour-slot {
     height: 60px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border-color);
     position: relative;
     margin-top: 0;
     cursor: pointer;
 }
 
 .hour-slot:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.03);
 }
 
 .hour-slot.current-hour {
@@ -432,22 +434,22 @@
 }
 
 .calendar-container::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 4px;
 }
 
 .calendar-container::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 4px;
 }
 
 .calendar-container::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.3);
+    background: rgba(0, 0, 0, 0.2);
 }
 
 /* Scrollbar Corner */
 .calendar-container::-webkit-scrollbar-corner {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 /* Header Section */
@@ -561,13 +563,13 @@
     max-height: 80vh;
     border-radius: 12px;
     box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     overflow-y: auto;
 }
 
 .modal-header {
     padding: 1.5rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid var(--border-color);
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -615,9 +617,9 @@
 .form-group textarea {
     width: 100%;
     padding: 0.75rem;
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid var(--border-color);
     border-radius: 8px;
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.9);
     color: var(--text-primary);
     font-size: 0.875rem;
     transition: all 0.2s ease;
@@ -646,7 +648,6 @@
     margin-bottom: 0.5rem;
     color: var(--text-secondary);
     font-size: 0.875rem;
-    /* Add these to match other labels */
     font-family: inherit;
     font-weight: normal;
 }
@@ -668,8 +669,8 @@
     border-radius: 6px;
     cursor: pointer;
     transition: all 0.2s ease;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
+    border: 1px solid var(--border-color);
     color: var(--text-secondary);
 }
 
@@ -687,25 +688,25 @@
 
 input[type="radio"]:checked + .priority-btn.low {
     background: rgba(46, 213, 115, 0.2);
-    border-color: rgba(46, 213, 115, 0.5);
+    border-color: #2ed573;
     color: #2ed573;
 }
 
 input[type="radio"]:checked + .priority-btn.medium {
     background: rgba(255, 171, 0, 0.2);
-    border-color: rgba(255, 171, 0, 0.5);
+    border-color: #ffab00;
     color: #ffab00;
 }
 
 input[type="radio"]:checked + .priority-btn.high {
     background: rgba(255, 71, 87, 0.2);
-    border-color: rgba(255, 71, 87, 0.5);
+    border-color: #ff4757;
     color: #ff4757;
 }
 
 input[type="date"]::-webkit-calendar-picker-indicator,
 input[type="time"]::-webkit-calendar-picker-indicator {
-    filter: invert(0.7);  /* Makes icons visible in dark theme */
+    filter: invert(0.7);
     cursor: pointer;
     opacity: 0.8;
 }
@@ -732,7 +733,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .cancel-btn {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     color: var(--text-secondary);
 }
 
@@ -749,7 +750,7 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
 }
 
 .cancel-btn:hover {
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.15);
 }
 
 .submit-btn:hover {
@@ -788,3 +789,4 @@ input[type="time"]::-webkit-calendar-picker-indicator:hover {
         opacity: 0;
     }
 }
+

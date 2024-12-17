@@ -1,22 +1,22 @@
 /* Base Colors and Variables */
 :root {
     /* Main Gradient Colors */
-    --black: #000000;
-    --dark-navy: #1A1A2E;
-    --deep-purple: #2B1B50;
-    --rich-purple: #4B1B7F;
-    --bright-purple: #9B2F93;
-    --pink: #FF6B97;
+    --black: #1a1a2e;
+    --dark-navy: #2a2a40;
+    --deep-purple: #3b2b60;
+    --rich-purple: #5b2b8f;
+    --bright-purple: #ab3fa3;
+    --pink: #ff7ba7;
 
     /* UI Colors */
-    --text-primary: #FFFFFF;
-    --text-secondary: rgba(255, 255, 255, 0.7);
-    --text-muted: rgba(255, 255, 255, 0.5);
-    --border-color: rgba(255, 255, 255, 0.1);
+    --text-primary: #333333;
+    --text-secondary: rgba(0, 0, 0, 0.7);
+    --text-muted: rgba(0, 0, 0, 0.5);
+    --border-color: rgba(0, 0, 0, 0.1);
 
     /* Card Backgrounds */
-    --card-bg: rgba(26, 26, 46, 0.7);
-    --card-bg-hover: rgba(43, 27, 80, 0.7);
+    --card-bg: rgba(255, 255, 255, 0.8);
+    --card-bg-hover: rgba(255, 255, 255, 0.9);
 }
 
 /* Reset & Base Styles */
@@ -29,12 +29,12 @@
 body {
     font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     background: linear-gradient(135deg, 
-        var(--black) 0%,
-        var(--dark-navy) 20%,
-        var(--deep-purple) 40%,
-        var(--rich-purple) 60%,
-        var(--bright-purple) 80%,
-        var(--pink) 100%
+        #f0f0f0 0%,
+        #e0e0e0 20%,
+        #d0d0d0 40%,
+        #c0c0c0 60%,
+        #b0b0b0 80%,
+        #a0a0a0 100%
     );
     color: var(--text-primary);
     min-height: 100vh;
@@ -51,8 +51,8 @@ body {
 .sidebar {
     width: 260px;
     background: linear-gradient(135deg,
-        rgba(0, 0, 0, 0.9) 0%,
-        rgba(26, 26, 46, 0.9) 100%
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(240, 240, 240, 0.9) 100%
     );
     backdrop-filter: blur(12px);
     border-right: 1px solid var(--border-color);
@@ -74,8 +74,8 @@ body {
 
 .sidebar .nav-section:first-of-type {
     position: relative;
-    padding-top: 64px;  /* Match header height */
-    border-top: 1px solid var(--border-color);  /* Add border to match header */
+    padding-top: 64px;
+    border-top: 1px solid var(--border-color);
 }
 
 .logo {
@@ -95,7 +95,7 @@ body {
 /* Navigation Sections */
 .nav-section {
     padding: 1.5rem 1rem;
-    margin-top: 1rem;  /* Added: Space after header */
+    margin-top: 1rem;
 }
 
 .nav-section.main-section {
@@ -130,14 +130,14 @@ body {
 }
 
 .nav-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
     color: var(--text-primary);
 }
 
 .nav-item.active {
     background: linear-gradient(135deg,
-        rgba(75, 27, 127, 0.3) 0%,
-        rgba(155, 47, 147, 0.3) 100%
+        rgba(91, 43, 143, 0.2) 0%,
+        rgba(171, 63, 163, 0.2) 100%
     );
     color: var(--text-primary);
 }
@@ -152,18 +152,18 @@ body {
     flex: 1;
     margin-left: 260px;
     background: linear-gradient(135deg,
-        rgba(0, 0, 0, 0.8) 0%,
-        rgba(26, 26, 46, 0.8) 100%
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(240, 240, 240, 0.8) 100%
     );
     backdrop-filter: blur(12px);
 }
 
 /* Header */
 .dashboard-header {
-    height: 64px;  /* Keep this */
+    height: 64px;
     background: linear-gradient(135deg,
-        rgba(0, 0, 0, 0.9) 0%,
-        rgba(26, 26, 46, 0.9) 100%
+        rgba(255, 255, 255, 0.9) 0%,
+        rgba(240, 240, 240, 0.9) 100%
     );
     backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--border-color);
@@ -186,7 +186,7 @@ body {
 .search-input {
     width: 100%;
     padding: 0.6rem 1rem;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
     border: 1px solid var(--border-color);
     border-radius: 8px;
     color: var(--text-primary);
@@ -197,7 +197,7 @@ body {
 .search-input:focus {
     outline: none;
     border-color: var(--rich-purple);
-    background: rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.08);
 }
 
 .header-right {
@@ -224,7 +224,7 @@ body {
     transform: translateY(-10px);
     transition: all 0.2s ease;
     z-index: 1050;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .notifications-panel.show {
@@ -245,7 +245,7 @@ body {
 }
 
 .notification-trigger:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .notifications-header {
@@ -265,7 +265,7 @@ body {
 
 .mark-all-read {
     font-size: 0.875rem;
-    color: var(--secondary-color);
+    color: var(--rich-purple);
     background: none;
     border: none;
     cursor: pointer;
@@ -275,7 +275,7 @@ body {
 .clear-all {
     font-size: 0.875rem;
     padding: 4px 8px;
-    color: var(--secondary-color);
+    color: var(--rich-purple);
     background: none;
     border: none;
     cursor: pointer;
@@ -283,9 +283,16 @@ body {
 }
 
 .empty-state {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100px;
     text-align: center;
-    padding: 2rem;
     color: var(--text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
 }
 
 .notifications-list {
@@ -308,14 +315,14 @@ body {
 }
 
 .notification-item:hover {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.02);
 }
 
 .notification-icon {
     font-size: 1.25rem;
     width: 36px;
     height: 36px;
-    background: rgba(155, 47, 147, 0.1);
+    background: rgba(171, 63, 163, 0.1);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -364,7 +371,7 @@ body {
     justify-content: center;
     font-weight: 600;
     transition: transform 0.2s ease;
-    font-size: 16px; /* Increased font size */
+    font-size: 16px;
     line-height: 1;
     text-transform: uppercase;
     color: white;
@@ -415,11 +422,7 @@ body {
 .stat-value {
     font-size: 1.875rem;
     font-weight: 600;
-}
-
-.stat-trend {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
+    color: var(--text-primary);
 }
 
 /* Welcome Message Styles */
@@ -450,8 +453,8 @@ body {
 
 .help-card {
     background: linear-gradient(135deg,
-        rgba(43, 27, 80, 0.7) 0%,
-        rgba(75, 27, 127, 0.7) 100%
+        rgba(230, 230, 240, 0.9) 0%,
+        rgba(220, 220, 230, 0.9) 100%
     );
     border-radius: 12px;
     padding: 1.5rem;
@@ -466,7 +469,7 @@ body {
 .help-icon {
     width: 40px;
     height: 40px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(91, 43, 143, 0.1);
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -496,7 +499,7 @@ body {
         var(--rich-purple),
         var(--bright-purple)
     );
-    color: var(--text-primary) !important; 
+    color: white !important; 
     text-decoration: none; 
     border: none;
     padding: 0.75rem;
@@ -517,8 +520,6 @@ body {
         var(--bright-purple),
         var(--rich-purple)
     );
-    text-decoration: none;
-    color: var(--text-primary) !important;
 }
 
 /* Task Cards Styles */
@@ -534,7 +535,7 @@ body {
     border: 1px solid var(--border-color);
     border-radius: 12px;
     padding: 1.5rem;
-    transition: transform 0.2s ease;
+    transition: all 0.2s ease;
 }
 
 .task-card:hover {
@@ -554,24 +555,17 @@ body {
     gap: 1rem;
 }
 
-.task-number {
-    font-size: 2.5rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    display: block;
-    margin-bottom: 0.5rem;
-}
-
 .progress-container {
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+    margin-top: 0.5rem;
 }
 
 .progress-bar {
     width: 100%;
     height: 8px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.1);
     border-radius: 4px;
     overflow: hidden;
 }
@@ -582,7 +576,12 @@ body {
         var(--rich-purple),
         var(--bright-purple)
     );
-    transition: width 0.3s ease;
+    width: var(--progress-width, 0%);
+    transition: width 1s ease-in-out;
+}
+
+.task-stats .progress-container {
+    margin-top: 1rem;
 }
 
 .total-tasks {
@@ -590,18 +589,104 @@ body {
     font-size: 0.875rem;
 }
 
-/* Upcoming Task Specific Styles */
-.task-info {
-    display: flex;
-    gap: 1rem;
+.task-card.clickable {
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+.task-card.clickable:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.task-card.clickable:hover::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg,
+        rgba(91, 43, 143, 0.05) 0%,
+        rgba(171, 63, 163, 0.05) 100%
+    );
+    border-radius: 12px;
+}
+
+/* Loading State Styles */
+.loading-skeleton {
+    background: linear-gradient(90deg,
+        var(--card-bg) 0%,
+        var(--card-bg-hover) 50%,
+        var(--card-bg) 100%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.5s infinite;
+    border-radius: 4px;
+}
+
+.task-card.loading h3 {
+    width: 120px;
+    height: 24px;
+    background: var(--card-bg-hover);
+}
+
+.task-card.loading .task-info {
+    height: 60px;
+    background: var(--card-bg-hover);
     margin-bottom: 1rem;
 }
 
-.task-image {
-    width: 80px;
-    height: 60px;
-    object-fit: cover;
-    border-radius: 8px;
+.task-card.loading .progress-bar {
+    background: var(--card-bg-hover);
+}
+
+/* Priority Labels */
+.priority-label {
+    display: inline-flex;
+    align-items: center;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    width: fit-content;
+}
+
+@keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -200% 0; }
+}
+
+.priority-label.high {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: rgb(239, 68, 68);
+}
+
+.priority-label.medium {
+    background-color: rgba(245, 158, 11, 0.1);
+    color: rgb(245, 158, 11);
+}
+
+.priority-label.low {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: rgb(16, 185, 129);
+}
+
+
+/* Upcoming Task Specific Styles */
+.task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.task-info h4 {
+    font-size: 1.1rem;
+    margin: 0;
+    color: var(--text-primary);
 }
 
 .task-details {
@@ -619,6 +704,20 @@ body {
 .task-type {
     color: var(--text-secondary);
     font-size: 0.875rem;
+    padding: 4px 8px;
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 12px;
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+}
+
+.task-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+    margin-top: 0.25rem;
 }
 
 .progress-info {
@@ -663,7 +762,7 @@ body {
 }
 
 .dropdown-item:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .avatar-wrapper {
@@ -681,6 +780,8 @@ body {
 }
 
 .verification-ring {
+    width: 36px;
+    height: 36px;
     position: absolute;
     top: -2px;
     left: -2px;
@@ -689,14 +790,15 @@ body {
     border-radius: 50%;
     border: 2px solid transparent;
     pointer-events: none;
+    z-index: 2;
 }
 
 .verification-ring.verified {
-    border-color: #10b981; /* Green color for verified */
+    border-color: #10b981;
 }
 
 .verification-ring.not-verified {
-    border-color: #ef4444; /* Red color for not verified */
+    border-color: #ef4444;
 }
 
 .verification-warning {
@@ -705,14 +807,14 @@ body {
     right: -2px;
     width: 14px;
     height: 14px;
-    background-color: #fbbf24; /* Yellow color for warning */
+    background-color: #fbbf24;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     font-size: 10px;
     color: #000;
-    z-index: 2;
+    z-index: 3;
     border: 2px solid var(--card-bg);
 }
 
@@ -726,7 +828,7 @@ body {
 .profile-image-section .avatar {
     width: 150px;
     height: 150px;
-    font-size: 60px; /* Much larger font size for the main profile */
+    font-size: 60px;
 }
 
 .image-container {
@@ -800,7 +902,7 @@ body {
 }
 
 .upload-option:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(0, 0, 0, 0.05);
 }
 
 .option-icon {
@@ -856,7 +958,7 @@ body {
     top: -4px;
     right: -4px;
     background: var(--bright-purple);
-    color: var(--text-primary);
+    color: white;
     font-size: 0.75rem;
     padding: 0.25rem 0.5rem;
     border-radius: 12px;

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Freelancer Dashboard - SynergyPro</title>
+    <title>Individual Freelancer Dashboard - SynergyPro</title>
     <link rel="icon" href="{% static 'images/logo_title.png' %}" type="image/png">
     <link rel="stylesheet" href="{% static 'css/dashboard.css' %}">
 </head>
@@ -17,13 +17,34 @@
                 <span class="logo-text">SynergyPro</span>
             </div>
 
-            <!-- Main Navigation -->
             <div class="nav-section">
                 <span class="section-title">MAIN</span>
-                <a href="{% url 'individual_freelancer_dashboard' %}" class="nav-item active">
+
+                <a href="#" 
+                    class="nav-item" 
+                    data-user-type="{{ user.user_type }}" 
+                    data-profile-type="{{ user.profile_type }}"
+                    onclick="return handleOverviewClick(this);">
                     <span class="nav-icon">📊</span>
                     Overview
                 </a>
+
+                <script>
+                    function handleOverviewClick(element) {
+                        const userType = element.getAttribute('data-user-type');
+                        const profileType = element.getAttribute('data-profile-type');
+                        
+                        if (userType === 'individual') {
+                            if (profileType === 'student') {
+                                window.location.href = "{% url 'individual_student_dashboard' %}";
+                            } else if (profileType === 'freelancer') {
+                                window.location.href = "{% url 'individual_freelancer_dashboard' %}";
+                            }
+                        }
+                        return false;
+                    }
+                </script>
+                
                 <a href="{% url 'tasks' %}" class="nav-item">
                     <span class="nav-icon">📝</span>
                     Tasks
@@ -38,18 +59,15 @@
                 </a>
             </div>
 
-            <!-- Tools Section -->
             <div class="nav-section">
                 <span class="section-title">TOOLS</span>
-                <div class="nav-item">
-                    <span class="nav-icon">👥</span>Client Manager
-                </div>
-                <div class="nav-item">
-                    <span class="nav-icon">📈</span>Analytics
-                </div>
+                <a href="{% url 'analytics' %}" class="nav-item">
+                    <span class="nav-icon">📈</span>
+                    Analytics
+                </a>
             </div>
-
-            <!-- Help Center -->
+            
+            <!-- Help Center Box -->
             <div class="help-center-box">
                 <div class="help-card">
                     <div class="help-icon">?</div>
@@ -62,12 +80,12 @@
 
         <!-- Main Content -->
         <main class="main-content">
+            <!-- Header -->
             <header class="dashboard-header">
                 <div class="welcome-message">
-                    <h1>Hi, {{ user.first_name }}</h1>
+                    <h1>Hi, {{ user.first_name }} {{ user.last_name }}</h1>
                     <p>Let's deliver excellence to your clients today!</p>
                 </div>
-
                 <div class="header-right">
                     <!-- Notifications Panel-->
                     <div class="notifications">
@@ -121,41 +139,38 @@
                             <a href="{% url 'logout' %}" class="dropdown-item"><span class="icon">🚪</span> Logout</a>
                         </div>
                     </div>
-                </div>    
+                </div>
             </header>
 
             <!-- Dashboard Content -->
             <div class="dashboard-content">
-                <!-- Stats Section -->
+                <!-- Stats Overview -->
                 <div class="stats-section">
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-title">Active Projects</div>
-                            <div class="stat-value">{{ active_projects }}</div>
+                            <span class="stat-title">Total Projects</span>
+                            <span class="stat-value">{{ total_tasks }}</span>
                         </div>
-                        <div class="stat-trend">↑ 2 from last month</div>
                     </div>
-
+                
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-title">Pending Deliverables</div>
-                            <div class="stat-value">{{ pending_deliverables }}</div>
+                            <span class="stat-title">In Progress</span>
+                            <span class="stat-value">{{ in_progress }}</span>
                         </div>
-                        <div class="stat-trend">Current Priority</div>
                     </div>
-
+                
                     <div class="stat-card">
                         <div class="stat-header">
-                            <div class="stat-title">Completed Projects</div>
-                            <div class="stat-value">{{ completed_projects }}</div>
+                            <span class="stat-title">Completed</span>
+                            <span class="stat-value">{{ completed }}</span>
                         </div>
-                        <div class="stat-trend">2 this month</div>
                     </div>
                 </div>
 
-                 <!-- Main Dashboard Grid -->
-                 <div class="dashboard-grid">
-                    <!-- Tasks Section -->
+                <!-- Main Dashboard Grid -->
+                <div class="dashboard-grid">
+                    <!-- Projects Section -->
                     <section class="tasks-panel">
                         <!-- Content will be added here -->
                     </section>
@@ -165,50 +180,57 @@
                         <!-- Content will be added here -->
                     </section>
                 </div>
-
+                
                 <!-- Project Cards -->
                 <div class="task-cards">
-                    <div class="task-card running">
-                        <h3>Current Project</h3>
+                    <!-- Running Project -->
+                    {% if first_task %}
+                    <div class="task-card running" onclick="window.location.href='{% url 'task_detail' first_task.id %}'">
+                        <h3>Running Project</h3>
                         <div class="task-stats">
-                            <span class="task-number">65%</span>
+                            <div class="task-info">
+                                <h4>{{ first_task.title }}</h4>
+                                <span class="task-type">{{ first_task.category.name|default:"No Category" }}</span>
+                                <span class="priority-label {{ first_task.priority }}">{{ first_task.priority|title }}</span>
+                            </div>
                             <div class="progress-container">
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 65%"></div>
+                                    <div class="progress-fill" style="width: {{ first_task.task_progress }}%"></div>
                                 </div>
-                                <span class="total-tasks">Project Timeline: 2 weeks remaining</span>
+                                <span class="total-tasks">{{ first_task.task_progress }}% Complete</span>
                             </div>
                         </div>
                     </div>
+                    {% endif %}
 
-                    <div class="task-card upcoming">
-                        <h3>Next Project</h3>
+                    <!-- Upcoming Project -->
+                    <div class="task-card upcoming" {% if second_task %}onclick="window.location.href='{% url 'tasks' %}'"{% endif %}>
+                        <h3>Upcoming Project</h3>
+                        {% if second_task %}
                         <div class="task-stats">
                             <div class="task-info">
-                                <img src="https://placehold.co/100x60/2a2a40/FFFFFF/png?text=Project" 
-                                     alt="Project" class="task-image"
-                                     style="border-radius: 8px; object-fit: cover;">
-                                <div class="task-details">
-                                    <h4>E-commerce Website</h4>
-                                    <span class="task-type">Web Development</span>
-                                </div>
+                                <h4>{{ second_task.title }}</h4>
+                                <span class="task-type">{{ second_task.category.name|default:"No Category" }}</span>
+                                <span class="priority-label {{ second_task.priority }}">{{ second_task.priority|title }}</span>
                             </div>
                             <div class="progress-container">
                                 <div class="progress-bar">
-                                    <div class="progress-fill" style="width: 0%"></div>
+                                    <div class="progress-fill" style="width: {{ second_task.task_progress }}%"></div>
                                 </div>
-                                <div class="progress-info">
-                                    <span>Starting next week</span>
-                                    <span>0%</span>
-                                </div>
+                                <span class="total-tasks">{{ second_task.task_progress }}% Complete</span>
                             </div>
                         </div>
+                        {% else %}
+                        <div class="task-stats empty-state">
+                            <p>NO MORE PROJECTS IN PIPELINE !!</p>
+                        </div>
+                        {% endif %}
                     </div>
                 </div>
             </div>
         </main>
     </div>
-
+    
     <script src="{% static 'js/notifications.js' %}"></script>
     <script src="{% static 'js/dashboard.js' %}"></script>
 </body>
