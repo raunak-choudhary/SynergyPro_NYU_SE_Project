@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 import os
@@ -13,6 +13,9 @@ from datetime import datetime, timedelta
 from ..utils.message_service import MessageService
 from .auth_views import get_dashboard_url
 from ..models.task_models import Task
+from ..models.user_models import CustomUser
+import json
+from ..models.message_models import TeamMessage
 
 @login_required
 def profile_view(request):
@@ -154,6 +157,218 @@ def individual_student_dashboard(request):
     }
     
     return render(request, 'task_management/dashboard/individual_student_dashboard.html', context)
+
+@login_required
+def team_academic_dashboard(request):
+    if request.user.user_type != 'team' or request.user.profile_type not in ['student', 'teacher']:
+        return redirect(get_dashboard_url(request.user))
+    
+    # Get team info
+    team_name = request.user.team_name
+    
+    # Get team admin
+    team_admin = CustomUser.objects.filter(
+        team_name=team_name,
+        user_type='team'
+    ).order_by('created_at').first()
+    
+    # Get team members
+    team_members = CustomUser.objects.filter(
+        team_name=team_name
+    ).order_by('created_at')
+    
+    # Get tasks for the entire team
+    team_tasks = Task.objects.filter(team_name=team_name)
+    in_progress_tasks = team_tasks.filter(status='in_progress').order_by('end_date', 'end_time')
+    completed_tasks = team_tasks.filter(status='completed')
+    
+    # Get first two in-progress tasks
+    first_task = in_progress_tasks.first()
+    second_task = None
+    if in_progress_tasks.count() > 1:
+        second_task = in_progress_tasks[1]
+    
+    context = {
+        'user': request.user,
+        'team_name': team_name,
+        'team_admin': team_admin,
+        'team_members': team_members,
+        'team_members_count': team_members.count(),
+        'total_tasks': team_tasks.count(),
+        'in_progress': in_progress_tasks.count(),
+        'completed': completed_tasks.count(),
+        'first_task': first_task,
+        'second_task': second_task,
+        'email_verified': request.user.email_verified,
+        'mobile_verified': request.user.mobile_verified
+    }
+    
+    return render(request, 'task_management/dashboard/team_academic_dashboard.html', context)
+
+@login_required
+def team_professional_dashboard(request):
+    if request.user.user_type != 'team' or request.user.profile_type not in ['professional', 'hr']:
+        return redirect(get_dashboard_url(request.user))
+    
+    # Get team info
+    team_name = request.user.team_name
+    
+    # Get team admin
+    team_admin = CustomUser.objects.filter(
+        team_name=team_name,
+        user_type='team'
+    ).order_by('created_at').first()
+    
+    # Get team members
+    team_members = CustomUser.objects.filter(
+        team_name=team_name
+    ).order_by('created_at')
+    
+    # Get tasks for the entire team
+    team_tasks = Task.objects.filter(team_name=team_name)
+    
+    # Sort tasks by due date/time
+    in_progress_tasks = team_tasks.filter(status='in_progress').order_by(
+        'end_date',
+        'end_time'
+    )
+    completed_tasks = team_tasks.filter(status='completed')
+    
+    # Get first two in-progress tasks
+    first_task = in_progress_tasks.first()
+    second_task = None
+    if in_progress_tasks.count() > 1:
+        second_task = in_progress_tasks[1]
+    
+    context = {
+        'user': request.user,
+        'team_name': team_name,
+        'team_admin': team_admin,
+        'team_members': team_members,
+        'team_members_count': team_members.count(),
+        'total_tasks': team_tasks.count(),
+        'in_progress': in_progress_tasks.count(),
+        'completed': completed_tasks.count(),
+        'first_task': first_task,
+        'second_task': second_task,
+        'email_verified': request.user.email_verified,
+        'mobile_verified': request.user.mobile_verified
+    }
+    
+    return render(request, 'task_management/dashboard/team_professional_dashboard.html', context)
+
+# Team Management APIs
+@login_required
+def add_team_member(request):
+    if request.method != 'POST':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    # Verify user is team admin
+    team_admin = CustomUser.objects.filter(
+        team_name=request.user.team_name,
+        user_type='team'
+    ).order_by('created_at').first()
+    
+    if request.user.id != team_admin.id:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+    
+    try:
+        data = json.loads(request.body)
+        email = data.get('email')
+        
+        if not email:
+            return JsonResponse({'error': 'Email is required'}, status=400)
+        
+        # Check if user exists
+        try:
+            new_member = CustomUser.objects.get(email=email)
+            
+            # Check if user is already in a team
+            if new_member.team_name:
+                return JsonResponse({
+                    'error': 'User already belongs to a team'
+                }, status=400)
+            
+            # Add user to team
+            new_member.team_name = request.user.team_name
+            new_member.user_type = 'team'
+            new_member.save()
+            
+            return JsonResponse({
+                'success': True,
+                'message': 'Team member added successfully'
+            })
+            
+        except CustomUser.DoesNotExist:
+            return JsonResponse({
+                'error': 'User not found'
+            }, status=404)
+            
+    except json.JSONDecodeError:
+        return JsonResponse({'error': 'Invalid request data'}, status=400)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+@login_required
+def remove_team_member(request, member_id):
+    if request.method != 'DELETE':
+        return JsonResponse({'error': 'Method not allowed'}, status=405)
+    
+    # Verify user is team admin
+    team_admin = CustomUser.objects.filter(
+        team_name=request.user.team_name,
+        user_type='team'
+    ).order_by('created_at').first()
+    
+    if request.user.id != team_admin.id:
+        return JsonResponse({'error': 'Unauthorized'}, status=403)
+    
+    try:
+        # Get member to remove
+        member = get_object_or_404(CustomUser, id=member_id, team_name=request.user.team_name)
+        
+        # Cannot remove team admin
+        if member.id == team_admin.id:
+            return JsonResponse({
+                'error': 'Cannot remove team admin'
+            }, status=400)
+        
+        # Remove from team
+        member.team_name = None
+        member.user_type = 'individual'
+        member.save()
+        
+        return JsonResponse({
+            'success': True,
+            'message': 'Team member removed successfully'
+        })
+        
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+    
+@login_required
+def get_team_messages(request):
+    if not request.user.team_name:
+        return JsonResponse({'error': 'No team assigned'}, status=400)
+    
+    messages = TeamMessage.objects.filter(
+        team_name=request.user.team_name
+    ).select_related('sender').order_by('-created_at')[:50]
+    
+    messages_data = [{
+        'id': msg.id,
+        'content': msg.content,
+        'sender': {
+            'id': msg.sender.id,
+            'name': msg.sender.get_full_name(),
+            'profile_image': msg.sender.profile_image.url if msg.sender.profile_image else None
+        },
+        'created_at': msg.created_at.isoformat(),
+        'is_private': msg.is_private,
+        'receiver_id': msg.receiver_id if msg.is_private else None
+    } for msg in messages]
+    
+    return JsonResponse({'messages': messages_data})
 
 @login_required
 @require_http_methods(["POST"])
@@ -528,9 +743,26 @@ def resend_otp(request):
         }, status=500)
 @login_required
 def dashboard_stats_api(request):
-    """API endpoint for dashboard statistics"""
     try:
-        all_tasks = Task.objects.filter(user=request.user)
+        if request.user.user_type == 'team':
+            # Get team members count
+            team_members = CustomUser.objects.filter(team_name=request.user.team_name)
+            team_members_count = team_members.count()
+            
+            # Get team tasks
+            all_tasks = Task.objects.filter(team_name=request.user.team_name)
+            team_members_data = [{
+                'id': member.id,
+                'name': member.get_full_name(),
+                'profile_image': member.profile_image.url if member.profile_image else None,
+                'profile_type': member.profile_type
+            } for member in team_members]
+        else:
+            # For individual users, get their own tasks
+            all_tasks = Task.objects.filter(user=request.user)
+            team_members_count = None
+            team_members_data = None
+            
         in_progress_tasks = all_tasks.filter(status='in_progress').order_by('end_date', 'end_time')
         completed_tasks = all_tasks.filter(status='completed')
         
@@ -541,6 +773,7 @@ def dashboard_stats_api(request):
             second_task = in_progress_tasks[1]
         
         data = {
+            'team_members_count': team_members_count,
             'total_tasks': all_tasks.count(),
             'in_progress': in_progress_tasks.count(),
             'completed': completed_tasks.count(),
@@ -552,7 +785,11 @@ def dashboard_stats_api(request):
                         'name': first_task.category.name if first_task.category else None
                     },
                     'priority': first_task.priority,
-                    'task_progress': first_task.task_progress
+                    'task_progress': first_task.task_progress,
+                    'end_date': first_task.end_date.isoformat() if first_task.end_date else None,
+                    'end_time': first_task.end_time.strftime('%H:%M') if first_task.end_time else None,
+                    'status': first_task.status,
+                    'team_members': team_members_data if request.user.user_type == 'team' else None
                 } if first_task else None,
                 'second_task': {
                     'id': second_task.id,
@@ -561,14 +798,19 @@ def dashboard_stats_api(request):
                         'name': second_task.category.name if second_task.category else None
                     },
                     'priority': second_task.priority,
-                    'task_progress': second_task.task_progress
+                    'task_progress': second_task.task_progress,
+                    'end_date': second_task.end_date.isoformat() if second_task.end_date else None,
+                    'end_time': second_task.end_time.strftime('%H:%M') if second_task.end_time else None,
+                    'status': second_task.status,
+                    'team_members': team_members_data if request.user.user_type == 'team' else None
                 } if second_task else None
             }
         }
         
         return JsonResponse(data)
-        
+            
     except Exception as e:
+        print(f"Error in dashboard_stats_api: {str(e)}")  # Add logging
         return JsonResponse({
             'error': str(e)
         }, status=500)

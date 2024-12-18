@@ -46,11 +46,21 @@ class AnalyticsManager {
     }
 
     async fetchData() {
-        const response = await fetch('/api/analytics/dashboard-data/');
-        if (!response.ok) {
-            throw new Error('Failed to fetch analytics data');
+        try {
+            // Get user type from DOM
+            const userType = document.querySelector('.nav-item[data-user-type]')?.dataset.userType;
+            const response = await fetch('/api/analytics/dashboard-data/');
+            if (!response.ok) {
+                throw new Error('Failed to fetch analytics data');
+            }
+            this.data = await response.json();
+
+            // Add user type to data for reference
+            this.data.userType = userType;
+        } catch (error) {
+            console.error('Error fetching analytics data:', error);
+            this.data = { userType: null };
         }
-        this.data = await response.json();
     }
 
     createStatusDistributionChart() {
@@ -59,12 +69,14 @@ class AnalyticsManager {
         const labels = Object.keys(data).length ? Object.keys(data) : ['Yet to Start', 'In Progress', 'Completed'];
         const values = Object.keys(data).length ? Object.values(data) : [0, 0, 0];
     
+        const chartTitle = this.data.userType === 'team' ? 'Team Tasks by Status' : 'Tasks by Status';
+    
         this.charts.status = new Chart(ctx, {
             type: 'bar',
             data: {
                 labels: labels.map(this.formatLabel),
                 datasets: [{
-                    label: 'Tasks by Status',
+                    label: chartTitle,
                     data: values,
                     backgroundColor: [
                         this.colors.blue,
@@ -76,14 +88,13 @@ class AnalyticsManager {
             options: {
                 ...this.getBarChartOptions('Number of Tasks'),
                 plugins: {
+                    title: {
+                        display: true,
+                        text: chartTitle
+                    },
                     tooltip: {
                         enabled: true
                     }
-                },
-                interaction: {
-                    mode: 'nearest',
-                    intersect: false,
-                    axis: 'x'
                 }
             }
         });
@@ -303,6 +314,10 @@ class AnalyticsManager {
                     title: {
                         display: true,
                         text: yAxisLabel
+                    },
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0
                     }
                 }
             },
@@ -343,6 +358,10 @@ class AnalyticsManager {
                     title: {
                         display: true,
                         text: yAxisLabel
+                    },
+                    ticks: {
+                        stepSize: 1,
+                        precision: 0
                     }
                 }
             }

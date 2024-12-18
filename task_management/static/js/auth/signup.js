@@ -10,16 +10,23 @@ async function handleSignup(formData) {
 
         const data = await response.json();
 
+        if (response.status === 409) {  // Team exists case
+            if (!formData.joining_existing_team) {
+                showTeamJoinModal(data.team_details, formData);
+                return false;
+            }
+        }
+
         if (!response.ok) {
             showToast(data.message, 'error');
             return false;
         }
 
-        // Close the signup modal
-        const modal = document.getElementById('authModal');
-        if (modal) {
-            modal.style.display = 'none';
-        }
+        // Close all modals first
+        const authModal = document.getElementById('authModal');
+        const teamJoinModal = document.getElementById('teamJoinModal');
+        if (authModal) authModal.style.display = 'none';
+        if (teamJoinModal) teamJoinModal.style.display = 'none';
 
         // Show success toast
         showToast(data.message, 'success');
@@ -28,19 +35,19 @@ async function handleSignup(formData) {
         const welcomeModal = document.getElementById('welcomeModal');
         const userNameSpan = welcomeModal.querySelector('.user-name');
         if (welcomeModal && userNameSpan) {
-            userNameSpan.textContent = formData.firstName || data.username;
+            userNameSpan.textContent = `${formData.firstName} ${formData.lastName}` || data.username;
             welcomeModal.style.display = 'block';
-        }
+            welcomeModal.classList.add('show');
 
-        // Redirect to appropriate dashboard after delay
-        if (data.redirect_url) {
+            // Start vanishing animation after 1.5 seconds
             setTimeout(() => {
-                window.location.href = data.redirect_url;
-            }, 2000); // 2 second delay to show welcome message
-        } else {
-            // Fallback to dashboard router if no specific URL provided
+                welcomeModal.classList.add('vanish');
+            }, 1500);
+
+            // Hide welcome modal and refresh page after 2 seconds
             setTimeout(() => {
-                window.location.href = '/dashboard/';
+                welcomeModal.style.display = 'none';
+                window.location.reload(); // Refresh the home page
             }, 2000);
         }
 
@@ -85,6 +92,41 @@ function showToast(message, type = 'success') {
             }, 300);
         }
     }, 50);
+}
+
+function showTeamJoinModal(teamDetails, formData) {
+    const modal = document.getElementById('teamJoinModal');
+    
+    // Fill in team details
+    document.getElementById('team-name').textContent = teamDetails.name;
+    document.getElementById('team-admin').textContent = teamDetails.admin_name;
+    document.getElementById('team-date').textContent = teamDetails.created_at;
+    document.getElementById('team-org').textContent = teamDetails.organization;
+    document.getElementById('team-type').textContent = teamDetails.team_type;
+    
+    modal.style.display = 'block';
+
+    // Handle join button click
+    document.getElementById('joinTeamBtn').onclick = () => {
+        // Close team join modal
+        modal.style.display = 'none';
+        
+        // Handle signup with joining flag
+        handleSignup({
+            ...formData,
+            joining_existing_team: true
+        });
+    };
+
+    // Handle cancel button click
+    document.getElementById('cancelJoinBtn').onclick = () => {
+        modal.style.display = 'none';
+    };
+
+    // Handle close button click
+    modal.querySelector('.close').onclick = () => {
+        modal.style.display = 'none';
+    };
 }
 
 // Handle welcome modal close button

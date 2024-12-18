@@ -10,6 +10,8 @@ from django.db import IntegrityError
 import os
 from django.http import HttpResponse
 from django.conf import settings
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 @login_required
 def tasks_view(request):
@@ -29,7 +31,11 @@ def task_detail_view(request, task_id):
 
 @login_required
 def tasks_api(request):
-    tasks = Task.objects.filter(user=request.user).order_by('-created_at')
+    if request.user.user_type == 'team':
+        tasks = Task.objects.filter(team_name=request.user.team_name).order_by('-created_at')
+    else:
+        tasks = Task.objects.filter(user=request.user).order_by('-created_at')
+
     tasks_data = [{
         'id': task.id,
         'title': task.title,
@@ -42,10 +48,11 @@ def tasks_api(request):
         'priority': task.priority,
         'task_progress': task.task_progress,
         'is_overdue': task.is_overdue(),
+        'team_name': task.team_name if request.user.user_type == 'team' else None,
         'category': {
             'id': task.category.id,
             'name': task.category.name
-        } if hasattr(task, 'category') and task.category else None
+        } if task.category else None
     } for task in tasks]
     return JsonResponse(tasks_data, safe=False)
 
@@ -120,6 +127,27 @@ def task_detail_api(request, task_id):
         return JsonResponse({'status': 'success'})
     
     return JsonResponse({'error': 'Method not allowed'}, status=405)
+
+@api_view(['PUT'])
+@login_required
+def update_task(request, task_id):
+    try:
+        task = Task.objects.get(id=task_id, user=request.user)
+
+        # Update task progress
+        if 'task_progress' in request.data:
+            task.task_progress = request.data['task_progress']
+
+        # Update status
+        if 'status' in request.data:
+            task.status = request.data['status']
+
+        task.save()  # This will trigger our custom save method
+
+        return Response({'status': 'success'})
+    except Task.DoesNotExist:
+        return Response({'error': 'Task not found'}, status=404)
+
 
 @login_required
 def task_comments_api(request, task_id):

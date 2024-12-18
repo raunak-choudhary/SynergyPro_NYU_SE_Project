@@ -1,9 +1,9 @@
 class TaskManager {
     constructor() {
-      this.initializeElements();
-      this.attachEventListeners();
-      this.initializeFilters();
-      this.fetchTasks();
+        this.initializeElements();
+        this.attachEventListeners();
+        this.initializeFilters();
+        this.fetchTasks();
     }
 
     initializeElements() {
@@ -167,6 +167,17 @@ class TaskManager {
             return;
         }
 
+        const inProgressSection = document.querySelector('#in-progress-tasks').parentElement;
+        const visibleTasks = Array.from(inProgressSection.querySelectorAll('.task-card'))
+        .filter(task => task.style.display !== 'none');
+
+        if (visibleTasks.length === 0) {
+            if (emotionBarContainer) {
+                emotionBarContainer.style.display = 'none';
+            }
+            return;
+        }
+
         // Show the container if there are tasks
         if (emotionBarContainer) {
             emotionBarContainer.style.display = 'block';
@@ -195,22 +206,33 @@ class TaskManager {
 
     async fetchTasks() {
         try {
+            const userType = document.querySelector('.nav-item[data-user-type]')?.dataset.userType;
             const response = await fetch('/api/tasks/');
-            console.log('API Response Status:', response.status); 
-            
+
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             
-            const data = await response.json();
-            console.log('Fetched Tasks:', data); 
+            const tasks = await response.json();
             
             // Clear existing tasks and counters
             this.clearAllTasks();
             
-            // Sort tasks into groups
-            this.sortTasks(data);
-            console.log('Sorted Task Groups:', this.taskGroups); 
+            if (userType === 'team') {
+                // For team users, filter tasks by team_name
+                tasks.forEach(task => {
+                    if (task.status === 'completed') {
+                        this.taskGroups.completed.push(task);
+                    } else if (task.is_overdue) {
+                        this.taskGroups.overdue.push(task);
+                    } else {
+                        this.taskGroups.inProgress.push(task);
+                    }
+                });
+            } else {
+                // For individual users, tasks are already filtered by user
+                this.sortTasks(tasks);
+            }
             
             // Update task counts
             this.updateTaskCounts();
@@ -258,10 +280,17 @@ class TaskManager {
             }
         });
     
-        // Sort each group by due date
-        this.taskGroups.inProgress = this.sortTasksByDueDate(this.taskGroups.inProgress);
-        this.taskGroups.completed = this.sortTasksByDueDate(this.taskGroups.completed);
-        this.taskGroups.overdue = this.sortTasksByDueDate(this.taskGroups.overdue);
+        // Sort function that considers both date and time
+        const sortByDateTime = (a, b) => {
+            const dateA = new Date(`${a.end_date}T${a.end_time || '00:00'}`);
+            const dateB = new Date(`${b.end_date}T${b.end_time || '00:00'}`);
+            return dateA - dateB;
+        };
+    
+        // Sort each group
+        this.taskGroups.inProgress = this.taskGroups.inProgress.sort(sortByDateTime);
+        this.taskGroups.completed = this.taskGroups.completed.sort(sortByDateTime);
+        this.taskGroups.overdue = this.taskGroups.overdue.sort(sortByDateTime);
     }
 
     updateTaskCounts() {
@@ -322,7 +351,6 @@ class TaskManager {
     }
 
     createTaskCard(task) {
-        console.log('Creating task card for:', task);
         
         const taskCard = document.createElement('div');
         taskCard.className = 'task-card';
@@ -338,14 +366,6 @@ class TaskManager {
                     <span class="priority-label">${task.priority} •</span>
                     <span class="category-label">${task.category ? task.category.name : 'No Category'}</span>
                 </div>
-                <div class="menu-container">
-                    <button class="menu-dots">⋮</button>
-                    <div class="menu-dropdown">
-                        <button class="menu-item delete-option">
-                            <span>🗑️</span>Delete
-                        </button>
-                    </div>
-                </div>
             </div>
             <div class="task-footer">
                 <div class="task-progress-section">
@@ -358,36 +378,24 @@ class TaskManager {
                     </div>
                 </div>
                 <div class="task-meta">
-                    ${this.formatTaskDate(task.end_date, task.status)}
+                    ${this.formatTaskDate(task.end_date, task.end_time, task.status)}
                     <div class="task-members">
                         <img src="${this.getCurrentUserAvatar()}" alt="User" class="member-avatar" />
                     </div>
                 </div>
             </div>
         `;
-        
-        // Log the generated HTML before insertion
-        console.log('Generated template:', template);
-        
+    
         taskCard.innerHTML = template;
 
         taskCard.addEventListener('click', () => {
             window.location.href = `/task/${task.id}/`;
         });
-    
-        // After insertion, verify the DOM structure
-        console.log('Actual DOM structure:', taskCard.innerHTML);
-        
+
         // Log computed styles
         const titleSection = taskCard.querySelector('.title-section');
         if (titleSection) {
             const computedStyle = window.getComputedStyle(titleSection);
-            console.log('Title section computed styles:', {
-                display: computedStyle.display,
-                flexDirection: computedStyle.flexDirection,
-                gap: computedStyle.gap,
-                marginBottom: computedStyle.marginBottom
-            });
         }
     
         return taskCard;
@@ -449,10 +457,9 @@ class TaskManager {
         }
     }
 
-    formatTaskDate(endDate, status) {
+    formatTaskDate(endDate, endTime, status) {
         if (!endDate) return '';
         
-        // For completed tasks
         if (status === "completed") {
             return `
                 <div class="due-date completed">
@@ -463,31 +470,37 @@ class TaskManager {
                     Completed
                 </div>`;
         }
-    
-        const end = new Date(endDate + 'T00:00:00');
+        
+        // Parse date and time separately
+        const [year, month, day] = endDate.split('-');
+        const [hours, minutes] = endTime.split(':');
+
+        // Create end date with correct time
+        const end = new Date(year, month - 1, day);
+        end.setHours(parseInt(hours), parseInt(minutes), 0);
+
         const now = new Date();
-        const diffInHours = Math.ceil((end - now) / (1000 * 60 * 60));
-        const diffInDays = Math.ceil(diffInHours / 24);
-    
+
+        // Calculate difference in milliseconds
+        const diffMs = end - now;
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
         let dateContent;
         let className;
     
-        // For overdue tasks
-        if (diffInDays < 0) {
-            dateContent = `Overdue by ${Math.abs(diffInDays)} days`;
+        if (diffDays < 0 || diffHours < 0) {
+            dateContent = `Overdue by ${Math.abs(diffDays+1)} days`;
             className = 'overdue';
         }
-        // For tasks due within 24 hours
-        else if (diffInHours <= 24) {
-            dateContent = `${diffInHours} hours left`;
+        else if (diffHours <= 24) {
+            dateContent = `${diffHours} hours left`;
             className = 'urgent';
         }
-        // For tasks due within 7 days
-        else if (diffInDays <= 7) {
-            dateContent = `${diffInDays} days left`;
+        else if (diffDays <= 7) {
+            dateContent = `${diffDays} days left`;
             className = 'upcoming';
         }
-        // For tasks due after 7 days
         else {
             dateContent = `Due ${end.toLocaleString('default', { month: 'short' })} ${end.getDate()}`;
             className = 'future';
@@ -596,6 +609,7 @@ class TaskManager {
     applyFilters() {
       const statusFilter = this.statusFilter.value;
       const categoryFilter = this.categoryFilter.value;
+      let visibleInProgressTasks = 0;
 
       this.sections.forEach(section => {
         if (section.wrapper) {
@@ -606,9 +620,21 @@ class TaskManager {
             const statusMatch = !statusFilter || taskStatus === statusFilter;
             const categoryMatch = !categoryFilter || taskCategory === categoryFilter;
             task.style.display = statusMatch && categoryMatch ? 'block' : 'none';
+            if (section.id === 'in-progress-tasks' && statusMatch && categoryMatch) {
+                visibleInProgressTasks++;
+            }
           });
         }
       });
+
+      const emotionBarContainer = document.querySelector('.emotion-bar-container');
+      if (emotionBarContainer) {
+          emotionBarContainer.style.display = visibleInProgressTasks > 0 ? 'block' : 'none';
+      }
+
+      if (visibleInProgressTasks > 0) {
+          this.updateEmotionBar(true);
+      }
 
       this.updateTaskCounts();
       this.updateAllArrowsVisibility();

@@ -35,7 +35,7 @@ class CustomUser(AbstractUser):
     mobile_verified_at = models.DateTimeField(null=True, blank=True)
     last_verification_attempt = models.DateTimeField(null=True, blank=True)
     bio = models.TextField(null=True, blank=True)
-    team_name = models.CharField(max_length=50, null=True, blank=True, unique=True)
+    team_name = models.CharField(max_length=50, null=True, blank=True)
 
     class Meta:
         db_table = 'users'

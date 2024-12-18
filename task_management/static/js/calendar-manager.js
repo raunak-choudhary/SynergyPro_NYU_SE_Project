@@ -16,6 +16,8 @@ class CalendarManager {
             this.initializeHeaderComponents();
             this.initializeTaskModal();
         }
+
+        window.addEventListener('resize', () => this.handleResize());
     }
 
     initializeCalendar() {
@@ -28,6 +30,23 @@ class CalendarManager {
         this.currentView = newView;
         this.updateCalendarHeader();
         this.updateCalendarView();
+    }
+
+    switchView(view) {
+        this.currentView = view;
+        const calendarGrid = document.getElementById('calendarGrid');
+
+        // Clear existing content and styles
+        calendarGrid.innerHTML = '';
+        calendarGrid.className = '';
+
+        if (view === 'month') {
+            calendarGrid.classList.add('month-view');
+            this.renderMonthView();
+        } else {
+            calendarGrid.classList.add('week-view');
+            this.renderWeekView();
+        }
     }
 
     // Calendar-specific methods from your original calendar.js
@@ -420,9 +439,7 @@ class CalendarManager {
         if (!calendarGrid) return;
         
         calendarGrid.innerHTML = '';
-        calendarGrid.style.height = 'calc(100vh - 300px)';
-        
-        // Create main container
+
         const weekContainer = document.createElement('div');
         weekContainer.className = 'week-grid-container';
         
@@ -446,16 +463,16 @@ class CalendarManager {
     createTimeColumn() {
         const timeColumn = document.createElement('div');
         timeColumn.className = 'time-column';
-        
-        // Empty header cell
-        const emptyHeader = document.createElement('div');
-        emptyHeader.className = 'week-day-header empty';
-        timeColumn.appendChild(emptyHeader);
+
+        // Add empty header
+        const headerCell = document.createElement('div');
+        headerCell.className = 'week-day-header empty';
+        timeColumn.appendChild(headerCell);
         
         // Time slots
         for (let hour = 0; hour < 24; hour++) {
             const timeSlot = document.createElement('div');
-            timeSlot.className = 'time-slot';
+            timeSlot.className = 'hour-slot';
             timeSlot.textContent = `${hour.toString().padStart(2, '0')}:00`;
             timeColumn.appendChild(timeSlot);
         }
@@ -485,8 +502,6 @@ class CalendarManager {
         for (let hour = 0; hour < 24; hour++) {
             const hourSlot = document.createElement('div');
             hourSlot.className = 'hour-slot';
-            hourSlot.setAttribute('data-hour', hour);
-            
             if (isToday && new Date().getHours() === hour) {
                 hourSlot.classList.add('current-hour');
             }
@@ -494,8 +509,6 @@ class CalendarManager {
             hourSlot.addEventListener('click', () => {
                 const selectedDateTime = new Date(date);
                 selectedDateTime.setHours(hour);
-                selectedDateTime.setMinutes(0);
-                selectedDateTime.setSeconds(0);
                 this.openTaskModal(selectedDateTime);
             });
     
@@ -857,6 +870,13 @@ class CalendarManager {
             });
         }
     }
+
+    handleResize() {
+        if (this.currentView === 'week') {
+            this.adjustHourSlotHeight();
+        }
+    }
+
 }
 
 // Initialize on DOM load

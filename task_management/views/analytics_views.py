@@ -20,23 +20,41 @@ def analytics_data(request):
     user = request.user
     today = timezone.now()
     thirty_days_ago = today - timedelta(days=30)
-    
-    # Get user's tasks within last 30 days
-    tasks = Task.objects.filter(
-        user=user,
-        created_at__gte=thirty_days_ago
-    )
-    
-    return JsonResponse({
-        'status_distribution': get_status_distribution(tasks),
-        'priority_distribution': get_priority_distribution(tasks),
-        'completion_rate': get_completion_rate(tasks),
-        'overdue_analysis': get_overdue_analysis(tasks),
-        'task_categories': get_task_categories(tasks),
-        'file_activity': get_file_activity(user),
-        'task_load': get_task_load(tasks),
-        'peak_performance': get_peak_performance(tasks)
-    })
+    try:
+        if request.user.user_type == 'team':
+            # Get team tasks
+            tasks = Task.objects.filter(
+                team_name=request.user.team_name,
+                created_at__gte=thirty_days_ago
+            )
+        else:
+            # Get individual tasks
+            tasks = Task.objects.filter(
+                user=request.user,
+                created_at__gte=thirty_days_ago
+            )
+
+        # Calculate analytics
+        status_distribution = {
+            'Not Started': tasks.filter(status='not_started').count(),
+            'In Progress': tasks.filter(status='in_progress').count(),
+            'Completed': tasks.filter(status='completed').count()
+        }
+
+        data = {
+            'status_distribution': get_status_distribution(tasks),
+            'priority_distribution': get_priority_distribution(tasks),
+            'completion_rate': get_completion_rate(tasks),
+            'overdue_analysis': get_overdue_analysis(tasks),
+            'task_categories': get_task_categories(tasks),
+            'file_activity': get_file_activity(user),
+            'task_load': get_task_load(tasks),
+            'peak_performance': get_peak_performance(tasks)
+        }
+
+        return JsonResponse(data)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)  
 
 def get_status_distribution(tasks):
     """Get distribution of tasks by status"""

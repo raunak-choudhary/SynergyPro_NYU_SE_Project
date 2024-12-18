@@ -16,9 +16,14 @@ urlpatterns = [
         # Dashboard URLs
         path('dashboard/individual/student/', dashboard_views.individual_student_dashboard, name='individual_student_dashboard'),
         path('dashboard/individual/freelancer/', dashboard_views.individual_freelancer_dashboard, name='individual_freelancer_dashboard'),
+        path('dashboard/team/academic/', dashboard_views.team_academic_dashboard, name='team_academic_dashboard'),
+        path('dashboard/team/professional/', dashboard_views.team_professional_dashboard, name='team_professional_dashboard'),
 
         #Dashboard API URLs
         path('api/dashboard/stats/', dashboard_views.dashboard_stats_api, name='dashboard_stats'),
+        path('api/team/members/add/', dashboard_views.add_team_member, name='add_team_member'),
+        path('api/team/members/<int:member_id>/remove/', dashboard_views.remove_team_member, name='remove_team_member'),
+        path('api/team/messages/', dashboard_views.get_team_messages, name='team_messages'),
         
         # Profile path
         path('profile/', dashboard_views.profile_view, name='profile'),

@@ -1,5 +1,6 @@
 class DashboardManager {
     constructor() {
+        this.setupCSRFToken();
         this.initializeElements();
         this.attachEventListeners();
         this.initializeVerificationStatus();
@@ -108,10 +109,21 @@ class DashboardManager {
     updateDashboardContent(data) {
         if (this.statSection) {
             const stats = this.statSection.querySelectorAll('.stat-card .stat-value');
-            if (stats.length >= 3) {
-                stats[0].textContent = data.total_tasks || '0';
-                stats[1].textContent = data.in_progress || '0';
-                stats[2].textContent = data.completed || '0';
+            if (stats.length >= 4) { // Changed to 4 since we have 4 stat cards now
+                const userType = document.querySelector('.nav-item[data-user-type]')?.dataset.userType;
+                
+                if (userType === 'team') {
+                    // For team dashboard
+                    stats[0].textContent = data.team_members_count || '0';
+                    stats[1].textContent = data.total_tasks || '0';
+                    stats[2].textContent = data.in_progress || '0';
+                    stats[3].textContent = data.completed || '0';
+                } else {
+                    // For individual dashboard
+                    stats[0].textContent = data.total_tasks || '0';
+                    stats[1].textContent = data.in_progress || '0';
+                    stats[2].textContent = data.completed || '0';
+                }
             }
         }
 
@@ -133,6 +145,9 @@ class DashboardManager {
             runningCard.innerHTML = this.generateTaskCardContent(tasks.first_task, true, userType, profileType);
             runningCard.onclick = () => window.location.href = `/task/${tasks.first_task.id}`;
             this.animateProgressBar(runningCard.querySelector('.progress-fill'), tasks.first_task.task_progress);
+        } else if (runningCard) {
+            // Show empty state for running card
+            runningCard.innerHTML = this.generateEmptyTaskCard(true, userType, profileType);
         }
     
         if (upcomingCard) {
@@ -141,38 +156,112 @@ class DashboardManager {
                 upcomingCard.onclick = () => window.location.href = '/tasks/';
                 this.animateProgressBar(upcomingCard.querySelector('.progress-fill'), tasks.second_task.task_progress);
             } else {
-                // Customize empty state message based on user type
-                const isFreelancer = userType === 'individual' && profileType === 'freelancer';
-                upcomingCard.innerHTML = `
-                    <h3>${isFreelancer ? 'Upcoming Project' : 'Upcoming Task'}</h3>
-                    <div class="task-stats empty-state">
-                        <p>NO MORE ${isFreelancer ? 'PROJECTS' : 'TASKS'} IN PIPELINE !!</p>
-                    </div>
-                `;
+                // Show empty state for upcoming card
+                upcomingCard.innerHTML = this.generateEmptyTaskCard(false, userType, profileType);
             }
         }
     }
 
     generateTaskCardContent(task, isRunning, userType, profileType) {
         const isFreelancer = userType === 'individual' && profileType === 'freelancer';
+        const isTeam = userType === 'team';
+        const taskTypeLabel = isFreelancer ? (isRunning ? 'Running Project' : 'Upcoming Project') 
+                            : isTeam ? (isRunning ? 'Running Team Task' : 'Upcoming Team Task')
+                            : (isRunning ? 'Running Task' : 'Upcoming Task');
+
         return `
-            <h3>${isRunning ? (isFreelancer ? 'Running Project' : 'Running Task') : (isFreelancer ? 'Upcoming Project' : 'Upcoming Task')}</h3>
+            <h3>${taskTypeLabel}</h3>
             <div class="task-stats">
                 <div class="task-info">
-                    <h4>${task.title}</h4>
+                    <h4 class="task-title">${task.title}</h4>
                     <div class="task-meta">
                         <span class="task-type">${task.category?.name || 'No Category'}</span>
-                        <span class="priority-label ${task.priority}">${task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}</span>
+                        <span class="priority-label ${task.priority.toLowerCase()}">${task.priority}</span>
                     </div>
                 </div>
-                <div class="progress-container">
+                <div class="task-progress-section">
+                    <div class="progress-header">
+                        <span class="progress-label">Progress</span>
+                        <span class="progress-text">${task.task_progress}%</span>
+                    </div>
                     <div class="progress-bar">
                         <div class="progress-fill" style="width: 0%"></div>
                     </div>
-                    <span class="total-tasks">${task.task_progress}% Complete</span>
+                </div>
+                <div class="task-meta">
+                    ${this.formatTaskDate(task.end_date, task.end_time, task.status)}
                 </div>
             </div>
         `;
+    }
+
+    generateEmptyTaskCard(isRunning, userType, profileType) {
+        const isFreelancer = userType === 'individual' && profileType === 'freelancer';
+        const isTeam = userType === 'team';
+        const cardType = isRunning ? 'Running' : 'Upcoming';
+        const itemType = isFreelancer ? 'Project' : (isTeam ? 'Team Task' : 'Task');
+        
+        return `
+            <h3>${cardType} ${itemType}</h3>
+            <div class="task-stats empty-state">
+                <p>NO ${cardType.toUpperCase()} ${itemType.toUpperCase()} IN PIPELINE !!</p>
+            </div>
+        `;
+    }
+
+    formatTaskDate(endDate, endTime, status) {
+        if (!endDate) return '';
+        
+        if (status === "completed") {
+            return `
+                <div class="due-date completed">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <path d="M9 12l2 2 4-4"/>
+                    </svg>
+                    Completed
+                </div>`;
+        }
+        
+        const end = new Date(`${endDate}T${endTime || '00:00'}`);
+        const now = new Date();
+        
+        const diffMs = end - now;
+        const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+        const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+
+        let dateContent;
+        let className;
+    
+        if (diffDays < 0 || diffHours < 0) {
+            dateContent = `Overdue by ${Math.abs(diffDays + 1)} days`;
+            className = 'overdue';
+        }
+        else if (diffHours <= 24) {
+            dateContent = `${diffHours} hours left`;
+            className = 'urgent';
+        }
+        else if (diffDays <= 7) {
+            dateContent = `${diffDays} days left`;
+            className = 'upcoming';
+        }
+        else {
+            const dateFormatter = new Intl.DateTimeFormat('default', { 
+                month: 'short', 
+                day: 'numeric' 
+            });
+            dateContent = `Due ${dateFormatter.format(end)}`;
+            className = 'future';
+        }
+    
+        return `
+            <div class="due-date ${className}">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M12 6v6l4 2"/>
+                </svg>
+                ${dateContent}
+            </div>`;
     }
 
     animateProgressBar(element, targetWidth) {
@@ -249,9 +338,161 @@ class DashboardManager {
             notification.remove();
         }, 5000);
     }
+
+    setupCSRFToken() {
+        // Create and add CSRF token input if it doesn't exist
+        if (!document.querySelector('[name=csrfmiddlewaretoken]')) {
+            const csrfToken = document.cookie
+                .split('; ')
+                .find(row => row.startsWith('csrftoken='))
+                ?.split('=')[1];
+
+            if (csrfToken) {
+                const tokenInput = document.createElement('input');
+                tokenInput.type = 'hidden';
+                tokenInput.name = 'csrfmiddlewaretoken';
+                tokenInput.value = csrfToken;
+                document.body.appendChild(tokenInput);
+            }
+        }
+    }
+}
+
+function showManageTeamModal() {
+    document.getElementById('manageTeamModal').style.display = 'block';
+}
+
+function closeManageTeamModal() {
+    document.getElementById('manageTeamModal').style.display = 'none';
+}
+
+async function addTeamMember() {
+    const email = document.getElementById('newMemberEmail').value;
+    try {
+        const response = await fetch('/api/team/members/add/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email })
+        });
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert(data.message);
+        }
+    } catch (error) {
+        console.error('Error adding team member:', error);
+    }
+}
+
+async function removeTeamMember(memberId) {
+    if (!confirm('Are you sure you want to remove this team member?')) return;
+    
+    try {
+        const response = await fetch(`/api/team/members/${memberId}/remove/`, {
+            method: 'DELETE'
+        });
+        if (response.ok) {
+            window.location.reload();
+        } else {
+            const data = await response.json();
+            alert(data.message);
+        }
+    } catch (error) {
+        console.error('Error removing team member:', error);
+    }
+}
+
+class TeamChat {
+    constructor() {
+        this.messagesList = document.getElementById('messagesList');
+        this.messageInput = document.getElementById('messageInput');
+        this.socket = null;
+        this.initializeWebSocket();
+        this.loadMessageHistory();
+    }
+
+    initializeWebSocket() {
+        const wsScheme = window.location.protocol === 'https:' ? 'wss://' : 'ws://';
+        const wsUrl = `${wsScheme}${window.location.host}/ws/chat/`;
+        
+        console.log('Attempting to connect to WebSocket at:', wsUrl);
+        
+        try {
+            this.socket = new WebSocket(wsUrl);
+    
+            this.socket.onopen = () => {
+                console.log('WebSocket connection established');
+            };
+    
+            this.socket.onmessage = (e) => {
+                try {
+                    const data = JSON.parse(e.data);
+                    this.addMessage(data);
+                } catch (error) {
+                    console.error('Error parsing message:', error);
+                }
+            };
+    
+            this.socket.onclose = (e) => {
+                console.log('WebSocket connection closed:', e.code, e.reason);
+                // Try to reconnect after 5 seconds
+                setTimeout(() => this.initializeWebSocket(), 5000);
+            };
+    
+            this.socket.onerror = (error) => {
+                console.error('WebSocket error:', error);
+            };
+        } catch (error) {
+            console.error('Error initializing WebSocket:', error);
+        }
+    }
+
+    async loadMessageHistory() {
+        try {
+            const response = await fetch('/api/team/messages/');
+            const data = await response.json();
+            data.messages.reverse().forEach(msg => this.addMessage(msg));
+        } catch (error) {
+            console.error('Error loading message history:', error);
+        }
+    }
+
+    addMessage(message) {
+        const messageElement = document.createElement('div');
+        messageElement.className = `message ${message.sender.id === currentUserId ? 'sent' : 'received'}`;
+        messageElement.innerHTML = `
+            <div class="message-content">
+                <div class="message-header">
+                    <span class="sender-name">${message.sender.name}</span>
+                    <span class="message-time">${new Date(message.created_at).toLocaleTimeString()}</span>
+                </div>
+                <div class="message-text">${message.content}</div>
+            </div>
+        `;
+        this.messagesList.appendChild(messageElement);
+        this.messagesList.scrollTop = this.messagesList.scrollHeight;
+    }
+
+    sendMessage() {
+        const message = this.messageInput.value.trim();
+        if (message && this.socket.readyState === WebSocket.OPEN) {
+            this.socket.send(JSON.stringify({
+                'message': message,
+                'is_private': false
+            }));
+            this.messageInput.value = '';
+        }
+    }
 }
 
 // Initialize Dashboard
 document.addEventListener('DOMContentLoaded', () => {
     window.dashboard = new DashboardManager();
+
+    if (document.getElementById('messagesList')) {
+        window.teamChat = new TeamChat();
+    }
 });

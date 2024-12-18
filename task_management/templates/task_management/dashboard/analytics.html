@@ -33,19 +33,26 @@
                 </a>
                 
                 <script>
-                function handleOverviewClick(element) {
-                    const userType = element.getAttribute('data-user-type');
-                    const profileType = element.getAttribute('data-profile-type');
-                    
-                    if (userType === 'individual') {
-                        if (profileType === 'student') {
-                            window.location.href = "{% url 'individual_student_dashboard' %}";
-                        } else if (profileType === 'freelancer') {
-                            window.location.href = "{% url 'individual_freelancer_dashboard' %}";
+                    function handleOverviewClick(element) {
+                        const userType = element.getAttribute('data-user-type');
+                        const profileType = element.getAttribute('data-profile-type');
+                        
+                        if (userType === 'individual') {
+                            if (profileType === 'student') {
+                                window.location.href = "{% url 'individual_student_dashboard' %}";
+                            } else if (profileType === 'freelancer') {
+                                window.location.href = "{% url 'individual_freelancer_dashboard' %}";
+                            }
                         }
+                        else if (userType === 'team') {
+                            if (profileType === 'student' || profileType === 'teacher') {
+                                window.location.href = "{% url 'team_academic_dashboard' %}";
+                            } else if (profileType === 'professional' || profileType === 'hr') {
+                                window.location.href = "{% url 'team_professional_dashboard' %}";
+                            }
+                        }
+                        return false;
                     }
-                    return false;
-                }
                 </script>
 
                 <a href="{% url 'tasks' %}" class="nav-item">

@@ -113,6 +113,7 @@ class TaskDetailManager {
             // Progress elements
             this.progressBar = document.getElementById('taskProgress');
             this.progressValue = document.querySelector('.progress-value');
+            this.statusButtons = document.querySelectorAll('.status-btn');
             
             // Comments elements
             this.commentsList = document.getElementById('commentsList');
@@ -156,7 +157,29 @@ class TaskDetailManager {
         this.saveBtn.addEventListener('click', () => this.saveChanges());
         
         if (this.progressBar) {
-            this.progressBar.addEventListener('input', () => this.updateProgressValue());
+            this.progressBar.addEventListener('input', () => {
+                const progress = parseInt(this.progressBar.value);
+
+                // Update status based on progress
+                if (progress === 100) {
+                    const completedBtn = document.querySelector('.status-btn[data-value="completed"]');
+                    if (completedBtn) {
+                        this.selectButton(completedBtn, '.status-btn');
+                    }
+                } else if (progress === 0) {
+                    const yetToStartBtn = document.querySelector('.status-btn[data-value="yet_to_start"]');
+                    if (yetToStartBtn) {
+                        this.selectButton(yetToStartBtn, '.status-btn');
+                    }
+                } else {
+                    const inProgressBtn = document.querySelector('.status-btn[data-value="in_progress"]');
+                    if (inProgressBtn) {
+                        this.selectButton(inProgressBtn, '.status-btn');
+                    }
+                }
+
+                this.updateProgressValue();
+            });
         }
         
         if (this.addCommentBtn) {
@@ -171,7 +194,19 @@ class TaskDetailManager {
         
         document.querySelectorAll('.status-btn').forEach(btn => {
             btn.addEventListener('click', () => {
-                if (!btn.disabled) this.selectButton(btn, '.status-btn');
+                if (!btn.disabled) {
+                    const newStatus = btn.getAttribute('data-value');
+                    this.selectButton(btn, '.status-btn');
+
+                    // Update progress bar based on status
+                    if (newStatus === 'completed') {
+                        this.progressBar.value = 100;
+                        this.updateProgressValue();
+                    } else if (newStatus === 'yet_to_start') {
+                        this.progressBar.value = 0;
+                        this.updateProgressValue();
+                    }
+                }
             });
         });
 
@@ -537,7 +572,7 @@ class TaskDetailManager {
             end_time: document.getElementById('endTime')?.value,
             priority: document.querySelector('.priority-btn.selected')?.getAttribute('data-value'),
             status: document.querySelector('.status-btn.selected')?.getAttribute('data-value'),
-            task_progress: document.getElementById('taskProgress')?.value || 0,
+            task_progress: parseInt(document.getElementById('taskProgress')?.value || 0),
             category_id: categoryId && categoryId !== '' ? parseInt(categoryId) : null
         };
         

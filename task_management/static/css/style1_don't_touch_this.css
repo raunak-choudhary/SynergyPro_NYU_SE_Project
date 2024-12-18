@@ -1,27 +1,59 @@
-.title-section {
+/* Add these styles to dashboard.css */
+
+.task-members {
     display: flex;
     align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
+    padding: 0.25rem 0;
 }
 
+.member-avatar {
+    position: relative;
+    transition: transform 0.2s ease;
+}
+
+.member-avatar:hover {
+    transform: translateY(-2px);
+    z-index: 20 !important;
+}
+
+.member-avatar img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+    object-fit: cover;
+}
+
+.member-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--rich-purple);
+    color: white;
+    font-size: 0.75rem;
+    font-weight: 500;
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    margin-left: 0.25rem;
+    border: 2px solid rgba(255, 255, 255, 0.9);
+}
+
+/* Update priority label styles */
 .priority-label {
-    font-size: 0.875rem;
+    text-transform: capitalize;
+    display: inline-flex;
+    align-items: center;
     padding: 4px 8px;
-    border-radius: 6px;
-    color: #fff;
-    opacity: 0.9;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 500;
+    line-height: 1;
+    width: fit-content;
 }
 
-.category-label {
-    font-size: 0.875rem;
-    padding: 4px 8px;
-    border-radius: 6px;
-    background: rgba(54, 153, 255, 0.2);
-    color: #3699FF;
-}
-
-.category-label.none {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.5);
+.task-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 0.5rem;
 }

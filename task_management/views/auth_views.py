@@ -15,14 +15,10 @@ def get_dashboard_url(user):
         elif user.profile_type == 'freelancer':
             return reverse('individual_freelancer_dashboard')
     elif user.user_type == 'team':
-        if user.profile_type == 'student':
-            return reverse('team_student_dashboard')
-        elif user.profile_type == 'teacher':
-            return reverse('team_teacher_dashboard')
-        elif user.profile_type == 'professional':
+        if user.profile_type in ['student', 'teacher']:
+            return reverse('team_academic_dashboard')
+        elif user.profile_type in ['professional', 'hr']:
             return reverse('team_professional_dashboard')
-        elif user.profile_type == 'hr':
-            return reverse('team_hr_dashboard')
     
     # Default fallback
     return reverse('individual_student_dashboard')
@@ -112,11 +108,20 @@ def signup_view(request):
                 }, status=400)
             
             if data.get('userType') == 'team' and data.get('teamName'):
-                if CustomUser.objects.filter(team_name=data.get('teamName')).exists():
+                existing_team = CustomUser.objects.filter(team_name=data.get('teamName')).first()
+                if existing_team and not data.get('joining_existing_team'):
+                    # Only send team exists response if not joining
                     return JsonResponse({
-                        'status': 'error',
-                        'message': 'Team name already exists'
-                    }, status=400)
+                        'status': 'team_exists',
+                        'message': 'Team already exists',
+                        'team_details': {
+                            'name': existing_team.team_name,
+                            'admin_name': f"{existing_team.first_name} {existing_team.last_name}",
+                            'created_at': existing_team.created_at.strftime("%B %d, %Y"),
+                            'organization': existing_team.organization_name if existing_team.profile_type in ['professional', 'hr'] else existing_team.university_name,
+                            'team_type': 'Professional Team' if existing_team.profile_type in ['professional', 'hr'] else 'Academic Team'
+                        }
+                    }, status=409)
                 
             # Create user with all fields
             user = CustomUser.objects.create_user(
