@@ -1,6 +1,8 @@
 # Synergypro - Task Management Application
 SynergyPro is a hybrid productivity platform designed to streamline task management and personalized study scheduling for professionals and students. This epic encompasses all functionalities that help users effectively balance work and study commitments, enhance collaboration, and track progress in real time.  
 
+Access this application at (http://18.119.78.218/) or (ec2-18-119-78-218.us-east-2.compute.amazonaws.com)
+
 **Functionalities**
 **Signup/Login**  
   - Individual Dashboard: Users can log in or sign up to access a personalized dashboard displaying their tasks, calendar, and progress metrics.  
