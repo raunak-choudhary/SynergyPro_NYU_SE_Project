@@ -32,4 +32,6 @@ SynergyPro is a hybrid productivity platform designed to streamline task managem
 
 **8. Help Center**   
   - Task Management Guides: Medium-style articles on improving task management skills are easily accessible within the platform.  
-  - Dynamic Updates: The content refreshes regularly, ensuring users have access to the latest insights and strategies.  
+  - Dynamic Updates: The content refreshes regularly, ensuring users have access to the latest insights and strategies.
+
+-----  
