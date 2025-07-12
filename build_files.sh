@@ -1,13 +1,9 @@
 #!/bin/bash
 
-# Install dependencies
-pip install -r requirements.txt
+# This file is not needed for the current Vercel setup
+# Vercel will automatically:
+# 1. Install dependencies from requirements.txt
+# 2. Handle static files through Django + WhiteNoise
+# 3. Deploy the WSGI application
 
-# Run database migrations
-python3.9 manage.py migrate --noinput
-
-# Collect static files
-python3.9 manage.py collectstatic --noinput --clear
-
-# Initialize keywords (if your management command exists)
-python3.9 manage.py initialize_keywords || echo "Keywords initialization skipped"
+echo "Build completed - Vercel handles everything automatically"
