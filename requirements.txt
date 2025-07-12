@@ -71,3 +71,4 @@ websocket-client==1.8.0
 wsproto==1.2.0
 yarl==1.17.1
 zope.interface==7.2
+whitenoise==6.8.2

@@ -13,24 +13,22 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 import os
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-6%9b!%(3q5&7pg)mk3hkq=0f&pde3l*f%ww5eh3=$n!2@7p7*6"
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-6%9b!%(3q5&7pg)mk3hkq=0f&pde3l*f%ww5eh3=$n!2@7p7*6')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1', 'yes']
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1']
+# Updated ALLOWED_HOSTS for Vercel
+ALLOWED_HOSTS = ['.vercel.app', 'localhost', '127.0.0.1', '*.vercel.app']
 
-
-
+# Media files configuration
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'task_management', 'media')
 
@@ -38,9 +36,7 @@ AWS_S3_OBJECT_PARAMETERS = {
     'CacheControl': 'max-age=0,no-cache,no-store,must-revalidate',
 }
 
-
 # Application definition
-
 INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
@@ -55,8 +51,10 @@ INSTALLED_APPS = [
 
 ASGI_APPLICATION = 'synergypro.asgi.application'
 
+# Updated MIDDLEWARE with WhiteNoise for static files
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",  # Added for Vercel static files
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -88,19 +86,14 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "synergypro.wsgi.application"
 
+# Channel layers configuration - simplified for Vercel
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('127.0.0.1', 6379)],
-        },
-    },
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer"
+    }
 }
 
-
-# Database
-# https://docs.djangoproject.com/en/5.1/ref/settings/#databases
-
+# Database configuration - Keep SQLite for temporary deployment
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -114,27 +107,25 @@ LOGIN_URL = '/'
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
 
-# Static files configuration
+# Static files configuration - Updated for Vercel
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'task_management', 'static'),
 ]
 
-#OTP Email Settings
+# WhiteNoise configuration for better static file handling
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+
+# OTP Email Settings - Updated to use environment variables for security
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com' 
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER = 'raunakchoudhary17@gmail.com'
-EMAIL_HOST_PASSWORD = 'uoah ficu zlhx phwt'  # Gmail App Password
-
-#EMAIL_USE_SSL = False
-#EMAIL_USE_TLS = True
+EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER', 'raunakchoudhary17@gmail.com')
+EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD', 'uoah ficu zlhx phwt')
 
 # Password validation
-# https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
-
 AUTH_PASSWORD_VALIDATORS = [
     {
         "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
@@ -150,30 +141,27 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
-# https://docs.djangoproject.com/en/5.1/topics/i18n/
-
 LANGUAGE_CODE = "en-us"
-
 TIME_ZONE = "UTC"
-
 USE_I18N = True
-
 USE_TZ = True
-
 
 # Message Framework Settings
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
 
-# Security Settings
-CSRF_COOKIE_SECURE = False  # Set to True in production
-SESSION_COOKIE_SECURE = False  # Set to True in production
-SECURE_SSL_REDIRECT = False  # Set to True in production
+# Security Settings - Updated for production
+CSRF_COOKIE_SECURE = not DEBUG
+SESSION_COOKIE_SECURE = not DEBUG
+SECURE_SSL_REDIRECT = False
+
+# Additional security settings for production
+if not DEBUG:
+    SECURE_BROWSER_XSS_FILTER = True
+    SECURE_CONTENT_TYPE_NOSNIFF = True
+    X_FRAME_OPTIONS = 'DENY'
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
-
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 try:
