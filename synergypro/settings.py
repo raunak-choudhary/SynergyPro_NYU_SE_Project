@@ -25,15 +25,8 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-6%9b!%(3q5&7pg)mk3hkq
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.environ.get('DEBUG', 'False').lower() in ['true', '1', 'yes']
 
-# Updated ALLOWED_HOSTS for Vercel - Fixed for actual domain
-ALLOWED_HOSTS = [
-    'synergypro-qt3vq5oft-raunak-choudharys-projects.vercel.app',  # Actual Vercel domain
-    '.vercel.app',               # Any Vercel subdomain
-    '*.vercel.app',              # Any Vercel subdomain (wildcard)
-    'localhost',                 # Local development
-    '127.0.0.1',                # Local development
-    '*',                         # Allow all hosts (for serverless flexibility)
-]
+# FINAL FIX: Allow ALL hosts for Vercel deployment (since domains keep changing)
+ALLOWED_HOSTS = ['*']
 
 # Media files configuration
 MEDIA_URL = '/media/'
